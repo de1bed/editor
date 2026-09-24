@@ -1,0 +1,22 @@
+{
+  "language": "es",
+  "note": "Palabras exactas (tras normalizar: minúsculas, sin acentos, letras repetidas colapsadas, leetspeak). 'prefixes' censura cualquier palabra que empiece así. Ampliable por usuario con addWords/allowWords.",
+  "words": [
+    "puta", "putas", "puto", "putos", "putita", "putazo", "hijueputa", "hijoputa", "hideputa", "jueputa", "ijueputa",
+    "mierda", "mierdas", "mierdero",
+    "cabron", "cabrona", "cabrones", "cabronas",
+    "verga", "vergas", "vergazo", "vergota",
+    "coño", "cono", "joder", "jodido", "jodida", "jodidos", "jodidas", "jodete", "jodan", "jode",
+    "carajo", "carajos",
+    "culo", "culos", "culero", "culera", "culeros", "culiao", "culiado", "culiada",
+    "pinche", "pinches",
+    "gilipollas", "polla", "pollas", "cojones", "cojon", "hostia", "hostias",
+    "marica", "maricas", "maricon", "maricones", "maricona",
+    "pendejo", "pendeja", "pendejos", "pendejas", "pendejada",
+    "conchetumare", "conchatumadre", "conchesumadre", "conchasumadre", "csm", "ctm", "hdp",
+    "mamon", "mamona", "mamaguevo", "mamahuevo", "malparido", "malparida", "gonorrea",
+    "ojete", "zorra", "zorras", "perra", "perras", "chucha", "chuchatumadre",
+    "boludo", "boluda", "pelotudo", "pelotuda", "forro", "huevon", "weon", "weona", "aweonao", "guevon"
+  ],
+  "prefixes": ["chingad", "chingar", "chingon", "chinga", "pendej", "mierd", "cabron", "hijueput", "hijoput", "malparid", "gonorre"]
+}

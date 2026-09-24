@@ -1,0 +1,15 @@
+{
+  "language": "en",
+  "note": "Exact words after normalization. 'prefixes' match any word starting with them.",
+  "words": [
+    "shit", "shits", "shitty", "shitting", "shithead", "shithole", "bullshit", "horseshit", "dipshit",
+    "bitch", "bitches", "bitchy", "bitching", "sonofabitch",
+    "ass", "asses", "asshole", "assholes", "jackass", "dumbass", "badass", "smartass",
+    "bastard", "bastards",
+    "dick", "dicks", "dickhead", "cock", "cocks", "cocksucker", "pussy", "pussies", "cunt", "cunts", "twat", "prick", "wanker", "bollocks",
+    "damn", "goddamn", "goddamnit", "dammit",
+    "whore", "whores", "slut", "sluts", "piss", "pissed",
+    "nigger", "niggers", "nigga", "niggas", "faggot", "faggots", "fag", "fags", "retard", "retarded"
+  ],
+  "prefixes": ["fuck", "motherfuck", "fck", "shitt", "bullshit"]
+}

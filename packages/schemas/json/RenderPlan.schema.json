@@ -1,0 +1,120 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$ref": "#/$defs/RenderPlan",
+  "$defs": {
+    "RenderPlan": {
+      "type": "object",
+      "properties": {
+        "version": {
+          "type": "number",
+          "const": 1
+        },
+        "quality": {
+          "type": "string",
+          "enum": [
+            "preview",
+            "final"
+          ]
+        },
+        "inputs": {
+          "type": "object",
+          "propertyNames": {
+            "type": "string"
+          },
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "assetId": {
+                "type": "string"
+              },
+              "variant": {
+                "type": "string",
+                "enum": [
+                  "source",
+                  "proxy",
+                  "music"
+                ]
+              }
+            },
+            "required": [
+              "assetId",
+              "variant"
+            ]
+          }
+        },
+        "files": {
+          "type": "object",
+          "propertyNames": {
+            "type": "string"
+          },
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "fonts": {
+          "default": [],
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "args": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "output": {
+          "type": "object",
+          "properties": {
+            "container": {
+              "type": "string",
+              "const": "mp4"
+            },
+            "width": {
+              "type": "integer",
+              "minimum": -9007199254740991,
+              "maximum": 9007199254740991
+            },
+            "height": {
+              "type": "integer",
+              "minimum": -9007199254740991,
+              "maximum": 9007199254740991
+            },
+            "fps": {
+              "type": "integer",
+              "minimum": -9007199254740991,
+              "maximum": 9007199254740991
+            },
+            "durationMs": {
+              "type": "integer",
+              "minimum": -9007199254740991,
+              "maximum": 9007199254740991
+            }
+          },
+          "required": [
+            "container",
+            "width",
+            "height",
+            "fps",
+            "durationMs"
+          ]
+        },
+        "hash": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "version",
+        "quality",
+        "inputs",
+        "files",
+        "args",
+        "output",
+        "hash"
+      ],
+      "title": "RenderPlan"
+    }
+  },
+  "$id": "https://editor.local/schemas/RenderPlan.schema.json"
+}

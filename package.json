@@ -1,0 +1,23 @@
+{
+  "name": "editor",
+  "private": true,
+  "packageManager": "pnpm@10.33.0",
+  "engines": { "node": ">=22" },
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "typecheck": "turbo run typecheck",
+    "test": "turbo run test",
+    "lint": "turbo run lint",
+    "gen:schemas": "pnpm --filter @editor/schemas gen",
+    "gen:fixtures": "bash scripts/gen-fixture.sh",
+    "check:schemas": "pnpm gen:schemas && git diff --exit-code packages/schemas/json workers/media/media/schemas"
+  },
+  "devDependencies": {
+    "turbo": "^2.11.3",
+    "typescript": "^5.9.3",
+    "@types/node": "^22.10.0",
+    "vitest": "^5.0.1",
+    "tsx": "^4.23.15"
+  }
+}

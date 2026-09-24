@@ -1,0 +1,10 @@
+{
+  "name": "@editor/core",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": { ".": "./src/index.ts", "./*": "./src/*.ts" },
+  "scripts": { "typecheck": "tsc -p .", "test": "vitest run" },
+  "dependencies": { "@editor/schemas": "workspace:*", "@noble/hashes": "^2.0.0", "zod": "^4.6.5" },
+  "devDependencies": { "fast-check": "^4.10.2", "vitest": "^5.0.1", "typescript": "^5.9.3", "@types/node": "^22.10.0" }
+}

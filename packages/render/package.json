@@ -1,0 +1,10 @@
+{
+  "name": "@editor/render",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": { ".": "./src/index.ts" },
+  "scripts": { "typecheck": "tsc -p .", "test": "vitest run" },
+  "dependencies": { "@editor/schemas": "workspace:*", "@editor/core": "workspace:*" },
+  "devDependencies": { "vitest": "^5.0.1", "typescript": "^5.9.3", "@types/node": "^22.10.0" }
+}

@@ -1,0 +1,142 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$ref": "#/$defs/DetectionTrack",
+  "$defs": {
+    "DetectionTrack": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "assetId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "query": {
+          "type": "string"
+        },
+        "kind": {
+          "anyOf": [
+            {
+              "type": "string",
+              "enum": [
+                "face",
+                "plate",
+                "logo",
+                "screen",
+                "custom"
+              ]
+            },
+            {
+              "type": "string",
+              "const": "person"
+            }
+          ]
+        },
+        "model": {
+          "type": "string"
+        },
+        "startMs": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "endMs": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "score": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "keyframes": {
+          "minItems": 1,
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "tMs": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              },
+              "x": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1
+              },
+              "y": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1
+              },
+              "w": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1
+              },
+              "h": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1
+              },
+              "score": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1
+              }
+            },
+            "required": [
+              "tMs",
+              "x",
+              "y",
+              "w",
+              "h"
+            ]
+          }
+        },
+        "mask": {
+          "type": "object",
+          "properties": {
+            "assetId": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            },
+            "format": {
+              "type": "string",
+              "const": "coco_rle_jsonl"
+            },
+            "fps": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            }
+          },
+          "required": [
+            "assetId",
+            "format",
+            "fps"
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "assetId",
+        "query",
+        "kind",
+        "model",
+        "startMs",
+        "endMs",
+        "score",
+        "keyframes"
+      ],
+      "title": "DetectionTrack"
+    }
+  },
+  "$id": "https://editor.local/schemas/DetectionTrack.schema.json"
+}

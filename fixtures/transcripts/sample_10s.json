@@ -1,0 +1,208 @@
+{
+  "assetId": "fixture_sample_10s",
+  "language": "es",
+  "provider": "fixture",
+  "providerVersion": "1",
+  "durationMs": 10000,
+  "words": [
+    {
+      "id": "w0",
+      "text": "hola",
+      "startMs": 500,
+      "endMs": 900,
+      "speaker": "S0",
+      "confidence": 0.95
+    },
+    {
+      "id": "w1",
+      "text": "a",
+      "startMs": 1000,
+      "endMs": 1400,
+      "speaker": "S0",
+      "confidence": 0.95
+    },
+    {
+      "id": "w2",
+      "text": "todos",
+      "startMs": 1500,
+      "endMs": 1900,
+      "speaker": "S0",
+      "confidence": 0.95
+    },
+    {
+      "id": "w3",
+      "text": "hoy",
+      "startMs": 2000,
+      "endMs": 2400,
+      "speaker": "S0",
+      "confidence": 0.95
+    },
+    {
+      "id": "w4",
+      "text": "les",
+      "startMs": 2500,
+      "endMs": 2900,
+      "speaker": "S0",
+      "confidence": 0.95
+    },
+    {
+      "id": "w5",
+      "text": "cuento",
+      "startMs": 3000,
+      "endMs": 3400,
+      "speaker": "S0",
+      "confidence": 0.95
+    },
+    {
+      "id": "w6",
+      "text": "una",
+      "startMs": 3500,
+      "endMs": 3900,
+      "speaker": "S0",
+      "confidence": 0.95
+    },
+    {
+      "id": "w7",
+      "text": "mierda",
+      "startMs": 4000,
+      "endMs": 4400,
+      "speaker": "S0",
+      "confidence": 0.95
+    },
+    {
+      "id": "w8",
+      "text": "que",
+      "startMs": 4500,
+      "endMs": 4900,
+      "speaker": "S0",
+      "confidence": 0.95
+    },
+    {
+      "id": "w9",
+      "text": "me",
+      "startMs": 5000,
+      "endMs": 5400,
+      "speaker": "S0",
+      "confidence": 0.95
+    },
+    {
+      "id": "w10",
+      "text": "pasó",
+      "startMs": 5500,
+      "endMs": 5900,
+      "speaker": "S0",
+      "confidence": 0.95
+    },
+    {
+      "id": "w11",
+      "text": "ayer",
+      "startMs": 6000,
+      "endMs": 6400,
+      "speaker": "S0",
+      "confidence": 0.95
+    },
+    {
+      "id": "w12",
+      "text": "en",
+      "startMs": 6500,
+      "endMs": 6900,
+      "speaker": "S1",
+      "confidence": 0.95
+    },
+    {
+      "id": "w13",
+      "text": "el",
+      "startMs": 7000,
+      "endMs": 7400,
+      "speaker": "S1",
+      "confidence": 0.95
+    },
+    {
+      "id": "w14",
+      "text": "trabajo.",
+      "startMs": 7500,
+      "endMs": 7900,
+      "speaker": "S1",
+      "confidence": 0.95
+    },
+    {
+      "id": "w15",
+      "text": "fue",
+      "startMs": 8000,
+      "endMs": 8400,
+      "speaker": "S1",
+      "confidence": 0.95
+    },
+    {
+      "id": "w16",
+      "text": "increíble",
+      "startMs": 8500,
+      "endMs": 8900,
+      "speaker": "S1",
+      "confidence": 0.95
+    },
+    {
+      "id": "w17",
+      "text": "de",
+      "startMs": 9000,
+      "endMs": 9400,
+      "speaker": "S1",
+      "confidence": 0.95
+    },
+    {
+      "id": "w18",
+      "text": "verdad",
+      "startMs": 9500,
+      "endMs": 9900,
+      "speaker": "S1",
+      "confidence": 0.95
+    }
+  ],
+  "speakers": [
+    {
+      "id": "S0",
+      "label": "Hablante 1"
+    },
+    {
+      "id": "S1",
+      "label": "Hablante 2"
+    }
+  ],
+  "sentences": [
+    {
+      "id": "s0",
+      "startMs": 500,
+      "endMs": 7900,
+      "wordIds": [
+        "w0",
+        "w1",
+        "w2",
+        "w3",
+        "w4",
+        "w5",
+        "w6",
+        "w7",
+        "w8",
+        "w9",
+        "w10",
+        "w11",
+        "w12",
+        "w13",
+        "w14"
+      ],
+      "speaker": "S0"
+    },
+    {
+      "id": "s1",
+      "startMs": 8000,
+      "endMs": 9900,
+      "wordIds": [
+        "w15",
+        "w16",
+        "w17",
+        "w18"
+      ],
+      "speaker": "S1"
+    }
+  ]
+}
