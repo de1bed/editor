@@ -28,7 +28,8 @@
             "build_timeline",
             "detect_objects",
             "render_preview",
-            "render_final"
+            "render_final",
+            "learn_style"
           ]
         },
         "status": {

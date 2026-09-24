@@ -25,7 +25,10 @@
     "react": "^19.3.0",
     "react-dom": "^19.3.0",
     "tus-js-client": "^4.3.1",
-    "zod": "^4.6.5"
+    "zod": "^4.6.5",
+    "@editor/tools": "workspace:*",
+    "@editor/llm": "workspace:*",
+    "@editor/agent": "workspace:*"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.3.3",

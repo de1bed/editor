@@ -73,3 +73,10 @@ export async function recordFeedback(db: Db, f: RecordFeedbackInput): Promise<st
     embeddingModel: model,
   });
 }
+
+/** Queues implicit style learning every 5 unapplied feedback items. */
+export async function maybeLearnStyle(db: Db, userId: string, projectId: string | null, enqueue: (type: "learn_style", input: Record<string, unknown>, projectId: string | null) => Promise<unknown>) {
+  const { unappliedFeedbackCount } = await import("@editor/db");
+  const n = await unappliedFeedbackCount(db, userId);
+  if (n >= 5 && n % 5 === 0) await enqueue("learn_style", { userId, bucket: n }, projectId);
+}

@@ -13,3 +13,4 @@ export * from "./json-diff";
 export * from "./apply-ops";
 export * from "./reframe";
 export * from "./geometry";
+export * from "./otio";

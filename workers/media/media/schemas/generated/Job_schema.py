@@ -17,6 +17,7 @@ class Type(StrEnum):
     detect_objects = "detect_objects"
     render_preview = "render_preview"
     render_final = "render_final"
+    learn_style = "learn_style"
 
 
 class Status(StrEnum):

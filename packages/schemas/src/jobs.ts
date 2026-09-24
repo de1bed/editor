@@ -10,6 +10,7 @@ export const JobType = z.enum([
   "detect_objects",
   "render_preview",
   "render_final",
+  "learn_style",
 ]);
 export type JobType = z.infer<typeof JobType>;
 

@@ -1,6 +1,7 @@
 import { clips } from "@editor/db";
 import { z } from "zod";
 import { body, route } from "@/lib/api";
+import { enqueueJob, maybeLearnStyle } from "@editor/jobs";
 import { recordFeedback } from "@/lib/feedback";
 
 const ReviewReq = z.object({ decision: z.enum(["approve", "reject"]), reason: z.string().max(500).optional() });
@@ -17,5 +18,6 @@ export const POST = route<{ id: string }>(async (req, { sb, user }, { id }) => {
     userText: b.reason ?? null,
     scope: "always",
   });
+  await maybeLearnStyle(sb, user.id, clip.projectId, (type, input, projectId) => enqueueJob({ userId: user.id, projectId, type, input }));
   return { clip };
 });

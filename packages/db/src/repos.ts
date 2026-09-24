@@ -682,3 +682,82 @@ export const detections = {
     }));
   },
 };
+
+export async function getDetection(db: Db, id: string): Promise<import("@editor/schemas").DetectionTrack & { userId: string }> {
+  const x = must(await db.from("detection_tracks").select().eq("id", id).single(), `detection ${id}`) as Row;
+  return {
+    id: x.id as string,
+    userId: x.user_id as string,
+    assetId: x.asset_id as string,
+    query: x.query as string,
+    kind: x.kind as import("@editor/schemas").DetectionTrack["kind"],
+    model: x.model as string,
+    startMs: x.start_ms as number,
+    endMs: x.end_ms as number,
+    score: Number(x.score),
+    keyframes: x.keyframes as import("@editor/schemas").DetectionTrack["keyframes"],
+  };
+}
+
+// ------------------------------------------------------------------ chat
+
+export interface ChatMessageRow {
+  id: string;
+  threadId: string;
+  role: "user" | "assistant" | "tool";
+  content: string;
+  toolCalls: unknown;
+  timelineVersion: number | null;
+  createdAt: string;
+}
+
+export const chat = {
+  async thread(db: Db, t: { userId: string; projectId: string; clipId: string }): Promise<string> {
+    const r = await db.from("chat_threads").select("id").eq("clip_id", t.clipId).order("created_at").limit(1).maybeSingle();
+    if (r.data?.id) return r.data.id as string;
+    const c = await db.from("chat_threads").insert({ user_id: t.userId, project_id: t.projectId, clip_id: t.clipId }).select("id").single();
+    return (must(c, "create thread") as { id: string }).id;
+  },
+  async add(db: Db, m: { userId: string; threadId: string; role: ChatMessageRow["role"]; content: string; toolCalls?: unknown; timelineVersion?: number | null }): Promise<string> {
+    const r = await db
+      .from("chat_messages")
+      .insert({ user_id: m.userId, thread_id: m.threadId, role: m.role, content: m.content, tool_calls: m.toolCalls ?? null, timeline_version: m.timelineVersion ?? null })
+      .select("id")
+      .single();
+    return (must(r, "add chat message") as { id: string }).id;
+  },
+  async history(db: Db, threadId: string, limit = 40): Promise<ChatMessageRow[]> {
+    const r = await db.from("chat_messages").select().eq("thread_id", threadId).order("created_at", { ascending: false }).limit(limit);
+    return (must(r, "chat history") as Row[])
+      .map((x) => ({
+        id: x.id as string,
+        threadId: x.thread_id as string,
+        role: x.role as ChatMessageRow["role"],
+        content: x.content as string,
+        toolCalls: x.tool_calls,
+        timelineVersion: (x.timeline_version as number) ?? null,
+        createdAt: x.created_at as string,
+      }))
+      .reverse();
+  },
+};
+
+export async function unappliedFeedbackCount(db: Db, userId: string): Promise<number> {
+  const r = await db.from("edit_feedback").select("id", { count: "exact", head: true }).eq("user_id", userId).is("profile_version_after", null);
+  return r.count ?? 0;
+}
+
+export async function unappliedFeedback(db: Db, userId: string, limit = 40) {
+  const r = await db.from("edit_feedback").select().eq("user_id", userId).is("profile_version_after", null).order("created_at", { ascending: false }).limit(limit);
+  return (must(r, "unapplied feedback") as Row[]).map((x) => ({
+    id: x.id as string,
+    clipId: (x.clip_id as string) ?? null,
+    kind: x.kind as string,
+    area: x.area as string,
+    scope: x.scope as string,
+    userText: (x.user_text as string) ?? null,
+    summary: ((x.context as { summary?: string }) ?? {}).summary ?? "",
+    ops: (x.ops as unknown[]) ?? [],
+    clipFeatures: ((x.context as { clipFeatures?: Record<string, unknown> }) ?? {}).clipFeatures ?? {},
+  }));
+}

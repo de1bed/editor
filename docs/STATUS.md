@@ -58,3 +58,22 @@
 **Qué falta**
 - El blur usa la caja envolvente de SAM 2; el enmascarado por píxel (máscaras RLE) queda preparado en el esquema pero no se renderiza aún.
 - Un blur dibujado a mano es estático. Para seguir un objeto en movimiento hay que usar la detección.
+
+## Fase 4 — chat con el agente + patches + perfil de estilo que aprende ✅
+
+**Qué quedó**
+- `packages/tools`: **registro único de herramientas**, cada una con entrada en Zod, ámbito (`read`/`edit`/`render`) y comprobación de propietario. Lo usan el agente interno y, en la fase 5, el servidor MCP. `patch_timeline` aplica EditOps de forma atómica y con concurrencia optimista, crea una versión nueva y encola el preview.
+- Chat por clip (`runClipChat`): el agente recibe el timeline en formato compacto (ids de segmentos, palabras `w7:m*****@4000[C]`, blurs, encuadre), el perfil de estilo, las reglas aprendidas y las decisiones pasadas similares (pgvector). Solo edita mediante herramientas. Si una herramienta falla, lee el error y reintenta.
+- Aprendizaje del estilo:
+  1. **Explícito**: cuando el usuario dice “siempre…”, el cambio se aplica al clip y además se crea una versión del perfil con procedencia `explicit`. Lo hace el agente con `update_style_profile` o, si no, el clasificador del turno.
+  2. **Implícito**: cada turno, aprobación o descarte se guarda como `EditFeedback` con embedding. Cada 5 elementos pendientes, el job `learn_style` propone cambios que solo se aplican si los respaldan al menos 2 evidencias distintas. La duración ideal se desplaza con una media móvil hacia la de los clips aprobados. Las reglas no expresables como ajuste (p. ej. “prefiere hooks con pregunta”) se guardan en lenguaje natural con su confianza.
+  3. Página **Mi estilo**: muestra de dónde viene cada valor (pedido o aprendido, con su %), permite olvidar reglas, editar la duración y el blur automático, y restaurar cualquier versión anterior.
+- Deshacer en el editor: cada cambio del chat o de la UI es una versión, así que se puede volver atrás.
+
+**Cómo probarlo**
+- `pnpm test`: `runClipChat` con un LLM falso y una base de datos en memoria. Comprueba la edición vía herramientas → versión 1 → preview encolado → preferencia “de ahora en adelante…” → perfil v2 con procedencia explícita → feedback enlazado. También que una corrección puntual no toque el perfil y que los errores de herramienta se informen. Además: aprendizaje con evidencia mínima, validación de cambios de estilo, deriva de la duración y que todas las herramientas generan un JSON Schema cerrado.
+- App (`ANTHROPIC_API_KEY`, y `OPENAI_API_KEY` para los embeddings): abre un clip → *Asistente* → “subtítulos más grandes y en amarillo”, “quita los primeros 3 segundos”, “siempre quiero los subtítulos arriba”. Luego revisa *Mi estilo*.
+
+**Qué falta**
+- Las respuestas del chat no se transmiten en streaming: se muestra “Editando…” hasta que termina el turno.
+- Hacen falta evals con conversaciones reales para ajustar los prompts del clasificador y del aprendiz.
