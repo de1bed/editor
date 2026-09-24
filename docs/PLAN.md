@@ -1,6 +1,6 @@
 # Plan de arquitectura — Editor de video con IA que aprende estilo
 
-> Estado: **propuesta para aprobación**. No hay código todavía.
+> Estado: **aprobado e implementado** (fases 1–5). Avance y limitaciones en [`STATUS.md`](STATUS.md).
 > Principio central: la IA nunca toca píxeles. El LLM produce/modifica un
 > `Timeline` (JSON validado); un motor determinista lo convierte en video.
 
@@ -20,7 +20,7 @@
 | Patches | El agente emite **`EditOp` tipadas** (no JSON Patch crudo); se guardan también como RFC 6902 para auditoría | Los índices de arrays en JSON Patch son frágiles para un LLM; las ops por `id` no |
 | Versionado | `timeline_versions` y `style_profile_versions` inmutables | Undo/redo y trazabilidad gratis |
 | Tiempo | Enteros en **milisegundos**; coordenadas normalizadas `[0,1]` | Sin errores de coma flotante ni dependencia de resolución |
-| LLM | `packages/llm` con adaptadores OpenAI/Anthropic, `LLM_PROVIDER` + `LLM_MODEL` por env. Default Anthropic: `claude-sonnet-5` (agente), `claude-haiku-4-5` (puntuar segmentos en lote) | |
+| LLM | `packages/llm` con adaptadores OpenAI/Anthropic, `LLM_PROVIDER` + `LLM_MODEL` por env. Default Anthropic: `claude-opus-5` (agente, aprendizaje), `claude-haiku-4-5` (puntuar segmentos en lote) | |
 | Herramientas | Un **registro único de tools** (`packages/tools`) usado por el agente interno y por el servidor MCP | Misma API para ambos |
 
 ---
