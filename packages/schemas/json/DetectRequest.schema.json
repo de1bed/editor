@@ -1,0 +1,108 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$ref": "#/$defs/DetectRequest",
+  "$defs": {
+    "DetectRequest": {
+      "type": "object",
+      "properties": {
+        "jobId": {
+          "default": null,
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "assetId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "video": {
+          "$ref": "#/$defs/StorageRef"
+        },
+        "query": {
+          "type": "string",
+          "minLength": 1
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "face",
+            "plate",
+            "logo",
+            "screen",
+            "custom"
+          ]
+        },
+        "startMs": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "endMs": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "sampleFps": {
+          "default": 4,
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 30
+        },
+        "tracker": {
+          "default": "sam2",
+          "type": "string",
+          "enum": [
+            "sam2",
+            "iou"
+          ]
+        },
+        "boxThreshold": {
+          "default": 0.3,
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "maskOut": {
+          "default": null,
+          "anyOf": [
+            {
+              "$ref": "#/$defs/StorageRef"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "assetId",
+        "video",
+        "query",
+        "kind",
+        "startMs",
+        "endMs"
+      ],
+      "title": "DetectRequest"
+    },
+    "StorageRef": {
+      "type": "object",
+      "properties": {
+        "bucket": {
+          "type": "string",
+          "minLength": 1
+        },
+        "path": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "bucket",
+        "path"
+      ]
+    }
+  },
+  "$id": "https://editor.local/schemas/DetectRequest.schema.json"
+}

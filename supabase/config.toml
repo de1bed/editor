@@ -1,0 +1,27 @@
+# Minimal Supabase CLI config for local development (`supabase start`).
+project_id = "editor"
+
+[api]
+port = 54321
+schemas = ["public", "storage"]
+max_rows = 1000
+
+[db]
+port = 54322
+major_version = 16
+
+[studio]
+port = 54323
+
+[storage]
+file_size_limit = "50GiB"
+
+[auth]
+site_url = "http://localhost:3000"
+additional_redirect_urls = ["http://localhost:3000/auth/callback"]
+enable_signup = true
+
+[auth.email]
+enable_signup = true
+double_confirm_changes = false
+enable_confirmations = false

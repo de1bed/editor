@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$ref": "#/$defs/RenderResult",
+  "$defs": {
+    "RenderResult": {
+      "type": "object",
+      "properties": {
+        "out": {
+          "$ref": "#/$defs/StorageRef"
+        },
+        "bytes": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "durationMs": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        }
+      },
+      "required": [
+        "out",
+        "bytes",
+        "durationMs"
+      ],
+      "title": "RenderResult"
+    },
+    "StorageRef": {
+      "type": "object",
+      "properties": {
+        "bucket": {
+          "type": "string",
+          "minLength": 1
+        },
+        "path": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "bucket",
+        "path"
+      ]
+    }
+  },
+  "$id": "https://editor.local/schemas/RenderResult.schema.json"
+}

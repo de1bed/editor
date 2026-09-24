@@ -23,6 +23,14 @@ const targets: Record<string, z.ZodType> = {
   FaceAnalysis: S.FaceAnalysis,
   RenderPlan: S.RenderPlan,
   Job: S.Job,
+  IngestRequest: S.IngestRequest,
+  IngestResult: S.IngestResult,
+  TranscribeRequest: S.TranscribeRequest,
+  TranscribeResult: S.TranscribeResult,
+  AnalyzeFacesRequest: S.AnalyzeFacesRequest,
+  DetectRequest: S.DetectRequest,
+  RenderRequest: S.RenderRequest,
+  RenderResult: S.RenderResult,
 };
 
 for (const [name, schema] of Object.entries(targets)) {

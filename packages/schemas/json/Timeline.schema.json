@@ -1313,6 +1313,13 @@
         "censored": {
           "default": false,
           "type": "boolean"
+        },
+        "censorOverride": {
+          "type": "string",
+          "enum": [
+            "censor",
+            "allow"
+          ]
         }
       },
       "required": [

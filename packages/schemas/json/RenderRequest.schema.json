@@ -1,0 +1,170 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$ref": "#/$defs/RenderRequest",
+  "$defs": {
+    "RenderRequest": {
+      "type": "object",
+      "properties": {
+        "jobId": {
+          "default": null,
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "plan": {
+          "$ref": "#/$defs/RenderPlan"
+        },
+        "inputs": {
+          "type": "object",
+          "propertyNames": {
+            "type": "string"
+          },
+          "additionalProperties": {
+            "$ref": "#/$defs/StorageRef"
+          }
+        },
+        "out": {
+          "$ref": "#/$defs/StorageRef"
+        }
+      },
+      "required": [
+        "plan",
+        "inputs",
+        "out"
+      ],
+      "title": "RenderRequest"
+    },
+    "RenderPlan": {
+      "type": "object",
+      "properties": {
+        "version": {
+          "type": "number",
+          "const": 1
+        },
+        "quality": {
+          "type": "string",
+          "enum": [
+            "preview",
+            "final"
+          ]
+        },
+        "inputs": {
+          "type": "object",
+          "propertyNames": {
+            "type": "string"
+          },
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "assetId": {
+                "type": "string"
+              },
+              "variant": {
+                "type": "string",
+                "enum": [
+                  "source",
+                  "proxy",
+                  "music"
+                ]
+              }
+            },
+            "required": [
+              "assetId",
+              "variant"
+            ]
+          }
+        },
+        "files": {
+          "type": "object",
+          "propertyNames": {
+            "type": "string"
+          },
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "fonts": {
+          "default": [],
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "args": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "output": {
+          "type": "object",
+          "properties": {
+            "container": {
+              "type": "string",
+              "const": "mp4"
+            },
+            "width": {
+              "type": "integer",
+              "minimum": -9007199254740991,
+              "maximum": 9007199254740991
+            },
+            "height": {
+              "type": "integer",
+              "minimum": -9007199254740991,
+              "maximum": 9007199254740991
+            },
+            "fps": {
+              "type": "integer",
+              "minimum": -9007199254740991,
+              "maximum": 9007199254740991
+            },
+            "durationMs": {
+              "type": "integer",
+              "minimum": -9007199254740991,
+              "maximum": 9007199254740991
+            }
+          },
+          "required": [
+            "container",
+            "width",
+            "height",
+            "fps",
+            "durationMs"
+          ]
+        },
+        "hash": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "version",
+        "quality",
+        "inputs",
+        "files",
+        "args",
+        "output",
+        "hash"
+      ],
+      "title": "RenderPlan"
+    },
+    "StorageRef": {
+      "type": "object",
+      "properties": {
+        "bucket": {
+          "type": "string",
+          "minLength": 1
+        },
+        "path": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "bucket",
+        "path"
+      ]
+    }
+  },
+  "$id": "https://editor.local/schemas/RenderRequest.schema.json"
+}

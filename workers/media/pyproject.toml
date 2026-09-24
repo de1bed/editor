@@ -1,0 +1,39 @@
+[project]
+name = "editor-media"
+version = "0.1.0"
+description = "Media workers (ingest, transcription, faces, detection, render) — run on Modal or locally"
+requires-python = ">=3.11"
+dependencies = [
+  "pydantic>=2.9",
+  "httpx>=0.27",
+  "numpy>=1.26",
+]
+
+[project.optional-dependencies]
+# Installed inside the Modal images; not needed for tests.
+modal = ["modal>=1.0", "fastapi[standard]>=0.115"]
+vision = ["opencv-python-headless>=4.10", "torch>=2.4", "transformers>=4.46", "pillow>=10"]
+asr = ["whisperx>=3.3"]
+
+[dependency-groups]
+dev = ["pytest>=8", "datamodel-code-generator>=0.26", "ruff>=0.7"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+
+[tool.ruff]
+line-length = 120
+target-version = "py311"
+extend-exclude = ["media/schemas/generated"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP"]
+ignore = ["E501"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["media"]

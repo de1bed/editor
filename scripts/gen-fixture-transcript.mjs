@@ -1,4 +1,4 @@
-// Synthetic transcript for fixtures/video/sample_10s.mp4: 18 words of 400 ms
+// Synthetic transcript for fixtures/video/sample_10s.mp4: 19 words of 400 ms
 // separated by 100 ms, starting at 0.5 s. Word w5 is a profanity (censorship tests).
 const text = "hola a todos hoy les cuento una mierda que me pasó ayer en el trabajo. fue increíble de verdad";
 const words = text.split(" ").map((t, i) => ({

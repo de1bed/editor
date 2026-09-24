@@ -13,3 +13,4 @@ ffmpeg -hide_banner -loglevel error -y \
   fixtures/video/sample_10s.mp4
 node scripts/gen-fixture-transcript.mjs > fixtures/transcripts/sample_10s.json
 ls -la fixtures/video fixtures/transcripts
+pnpm exec tsx scripts/gen-fixture-plans.ts

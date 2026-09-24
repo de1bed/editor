@@ -7,3 +7,4 @@ export * from "./feedback";
 export * from "./detection";
 export * from "./render-plan";
 export * from "./jobs";
+export * from "./media-api";

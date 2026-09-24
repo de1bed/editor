@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$ref": "#/$defs/TranscribeResult",
+  "$defs": {
+    "TranscribeResult": {
+      "type": "object",
+      "properties": {
+        "out": {
+          "$ref": "#/$defs/StorageRef"
+        },
+        "language": {
+          "type": "string"
+        },
+        "wordCount": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "durationMs": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "provider": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "out",
+        "language",
+        "wordCount",
+        "durationMs",
+        "provider"
+      ],
+      "title": "TranscribeResult"
+    },
+    "StorageRef": {
+      "type": "object",
+      "properties": {
+        "bucket": {
+          "type": "string",
+          "minLength": 1
+        },
+        "path": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "bucket",
+        "path"
+      ]
+    }
+  },
+  "$id": "https://editor.local/schemas/TranscribeResult.schema.json"
+}

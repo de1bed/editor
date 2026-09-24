@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$ref": "#/$defs/IngestRequest",
+  "$defs": {
+    "IngestRequest": {
+      "type": "object",
+      "properties": {
+        "jobId": {
+          "default": null,
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "source": {
+          "$ref": "#/$defs/StorageRef"
+        },
+        "proxyOut": {
+          "$ref": "#/$defs/StorageRef"
+        },
+        "audioOut": {
+          "$ref": "#/$defs/StorageRef"
+        },
+        "thumbOut": {
+          "$ref": "#/$defs/StorageRef"
+        },
+        "proxyHeight": {
+          "default": 720,
+          "type": "integer",
+          "minimum": 240,
+          "maximum": 1080
+        }
+      },
+      "required": [
+        "source",
+        "proxyOut",
+        "audioOut",
+        "thumbOut"
+      ],
+      "title": "IngestRequest"
+    },
+    "StorageRef": {
+      "type": "object",
+      "properties": {
+        "bucket": {
+          "type": "string",
+          "minLength": 1
+        },
+        "path": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "bucket",
+        "path"
+      ]
+    }
+  },
+  "$id": "https://editor.local/schemas/IngestRequest.schema.json"
+}

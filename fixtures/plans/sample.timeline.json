@@ -1,0 +1,303 @@
+{
+  "schemaVersion": "1",
+  "id": "tl_fixture",
+  "projectId": "proj_fixture",
+  "clipId": "clip_fixture",
+  "version": 1,
+  "source": {
+    "assetId": "fixture_sample_10s",
+    "durationMs": 10000,
+    "width": 640,
+    "height": 360,
+    "fps": {
+      "num": 30,
+      "den": 1
+    }
+  },
+  "output": {
+    "width": 1080,
+    "height": 1920,
+    "fps": 30
+  },
+  "style": {
+    "styleProfileVersionId": null,
+    "resolved": {
+      "captions": {
+        "fontFamily": "Montserrat",
+        "fontWeight": 800,
+        "fontSizePx": 72,
+        "textColor": "#FFFFFF",
+        "highlightColor": "#FFD400",
+        "strokeColor": "#000000",
+        "strokeWidthPx": 6,
+        "shadow": {
+          "color": "#000000",
+          "blurPx": 0,
+          "offsetPx": 3
+        },
+        "background": null,
+        "position": {
+          "anchor": "bottom",
+          "offsetYPct": 22
+        },
+        "maxWordsPerLine": 3,
+        "maxLines": 1,
+        "uppercase": true,
+        "animation": "karaoke_highlight",
+        "emphasis": {
+          "enabled": true,
+          "color": "#00E5FF",
+          "scale": 1.15
+        }
+      },
+      "pacing": {
+        "clipDurationSec": {
+          "min": 20,
+          "ideal": 40,
+          "max": 75
+        },
+        "maxShotLengthSec": 8,
+        "removeSilencesAboveMs": null,
+        "removeFillers": false
+      },
+      "zooms": {
+        "perMinute": 4,
+        "scale": 1.12,
+        "style": "punch"
+      },
+      "transitions": {
+        "type": "cut",
+        "durationMs": 0
+      },
+      "music": {
+        "enabled": false,
+        "moods": [],
+        "gainDb": -18,
+        "duckUnderSpeechDb": -10
+      },
+      "hook": {
+        "type": "bold_claim",
+        "maxHookSec": 3,
+        "textOverlay": false
+      },
+      "reframe": {
+        "defaultMode": "track",
+        "smoothing": 0.7,
+        "splitWhenTwoSpeakers": false
+      },
+      "censorship": {
+        "enabled": true,
+        "languages": [
+          "es",
+          "en"
+        ],
+        "audio": "bleep",
+        "bleepHz": 1000,
+        "paddingMs": 40,
+        "captionMask": "first_letter",
+        "addWords": {},
+        "allowWords": {},
+        "autoBlur": {
+          "faces": false,
+          "plates": false,
+          "screens": false,
+          "logos": false
+        },
+        "blurEffect": {
+          "type": "gaussian",
+          "strength": 30
+        }
+      }
+    }
+  },
+  "meta": {
+    "title": "",
+    "createdBy": "system"
+  },
+  "segments": [
+    {
+      "id": "seg_1",
+      "sourceStartMs": 500,
+      "sourceEndMs": 2500,
+      "speed": 1
+    },
+    {
+      "id": "seg_2",
+      "sourceStartMs": 3500,
+      "sourceEndMs": 6000,
+      "speed": 1
+    }
+  ],
+  "reframe": [],
+  "captions": {
+    "enabled": true,
+    "cues": [
+      {
+        "id": "cue_w0",
+        "sourceStartMs": 500,
+        "sourceEndMs": 2000,
+        "words": [
+          {
+            "wordId": "w0",
+            "text": "hola",
+            "sourceStartMs": 500,
+            "sourceEndMs": 900,
+            "emphasis": false,
+            "censored": false
+          },
+          {
+            "wordId": "w1",
+            "text": "a",
+            "sourceStartMs": 1000,
+            "sourceEndMs": 1400,
+            "emphasis": false,
+            "censored": false
+          },
+          {
+            "wordId": "w2",
+            "text": "todos",
+            "sourceStartMs": 1500,
+            "sourceEndMs": 1900,
+            "emphasis": false,
+            "censored": false
+          }
+        ]
+      },
+      {
+        "id": "cue_w3",
+        "sourceStartMs": 2000,
+        "sourceEndMs": 2650,
+        "words": [
+          {
+            "wordId": "w3",
+            "text": "hoy",
+            "sourceStartMs": 2000,
+            "sourceEndMs": 2400,
+            "emphasis": false,
+            "censored": false
+          }
+        ]
+      },
+      {
+        "id": "cue_w6",
+        "sourceStartMs": 3500,
+        "sourceEndMs": 5000,
+        "words": [
+          {
+            "wordId": "w6",
+            "text": "una",
+            "sourceStartMs": 3500,
+            "sourceEndMs": 3900,
+            "emphasis": false,
+            "censored": false
+          },
+          {
+            "wordId": "w7",
+            "text": "mierda",
+            "displayText": "m*****",
+            "sourceStartMs": 4000,
+            "sourceEndMs": 4400,
+            "emphasis": false,
+            "censored": true
+          },
+          {
+            "wordId": "w8",
+            "text": "que",
+            "sourceStartMs": 4500,
+            "sourceEndMs": 4900,
+            "emphasis": false,
+            "censored": false
+          }
+        ]
+      },
+      {
+        "id": "cue_w9",
+        "sourceStartMs": 5000,
+        "sourceEndMs": 6150,
+        "words": [
+          {
+            "wordId": "w9",
+            "text": "me",
+            "sourceStartMs": 5000,
+            "sourceEndMs": 5400,
+            "emphasis": false,
+            "censored": false
+          },
+          {
+            "wordId": "w10",
+            "text": "pasó",
+            "sourceStartMs": 5500,
+            "sourceEndMs": 5900,
+            "emphasis": false,
+            "censored": false
+          }
+        ]
+      }
+    ]
+  },
+  "blurs": [
+    {
+      "id": "b1",
+      "label": "cara",
+      "kind": "face",
+      "sourceStartMs": 500,
+      "sourceEndMs": 6000,
+      "shape": "rect",
+      "keyframes": [
+        {
+          "tMs": 500,
+          "x": 0.4,
+          "y": 0.2,
+          "w": 0.2,
+          "h": 0.3
+        },
+        {
+          "tMs": 6000,
+          "x": 0.45,
+          "y": 0.25,
+          "w": 0.2,
+          "h": 0.3
+        }
+      ],
+      "effect": {
+        "type": "gaussian",
+        "strength": 30
+      },
+      "featherPx": 0
+    }
+  ],
+  "audio": {
+    "masterGainDb": 0,
+    "events": [
+      {
+        "id": "cens_w7",
+        "type": "bleep",
+        "sourceStartMs": 3960,
+        "sourceEndMs": 4440,
+        "reason": "censorship",
+        "wordId": "w7",
+        "bleepHz": 1000
+      }
+    ],
+    "music": []
+  },
+  "overlays": [
+    {
+      "id": "z1",
+      "type": "zoom",
+      "outputStartMs": 1000,
+      "outputEndMs": 2000,
+      "scale": 1.15,
+      "easing": "punch"
+    },
+    {
+      "id": "h1",
+      "type": "text",
+      "outputStartMs": 0,
+      "outputEndMs": 1500,
+      "text": "Lo que pasó ayer…",
+      "style": "hook",
+      "position": "top"
+    }
+  ]
+}

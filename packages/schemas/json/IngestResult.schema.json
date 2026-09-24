@@ -1,0 +1,126 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$ref": "#/$defs/IngestResult",
+  "$defs": {
+    "IngestResult": {
+      "type": "object",
+      "properties": {
+        "probe": {
+          "$ref": "#/$defs/ProbeInfo"
+        },
+        "proxy": {
+          "type": "object",
+          "properties": {
+            "width": {
+              "type": "integer",
+              "minimum": -9007199254740991,
+              "maximum": 9007199254740991
+            },
+            "height": {
+              "type": "integer",
+              "minimum": -9007199254740991,
+              "maximum": 9007199254740991
+            },
+            "bytes": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            }
+          },
+          "required": [
+            "width",
+            "height",
+            "bytes"
+          ]
+        },
+        "audioBytes": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "thumbBytes": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        }
+      },
+      "required": [
+        "probe",
+        "proxy",
+        "audioBytes",
+        "thumbBytes"
+      ],
+      "title": "IngestResult"
+    },
+    "ProbeInfo": {
+      "type": "object",
+      "properties": {
+        "durationMs": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "width": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "height": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "fps": {
+          "type": "object",
+          "properties": {
+            "num": {
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 9007199254740991
+            },
+            "den": {
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 9007199254740991
+            }
+          },
+          "required": [
+            "num",
+            "den"
+          ]
+        },
+        "hasAudio": {
+          "type": "boolean"
+        },
+        "videoCodec": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "audioCodec": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "bytes": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        }
+      },
+      "required": [
+        "durationMs",
+        "width",
+        "height",
+        "fps",
+        "hasAudio",
+        "videoCodec",
+        "audioCodec",
+        "bytes"
+      ]
+    }
+  },
+  "$id": "https://editor.local/schemas/IngestResult.schema.json"
+}
