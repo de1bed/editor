@@ -3,7 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "exports": { ".": "./src/index.ts", "./trigger": "./src/trigger/tasks.ts" },
+  "exports": {
+    ".": "./src/index.ts",
+    "./trigger": "./src/trigger/tasks.ts"
+  },
   "scripts": {
     "typecheck": "tsc -p .",
     "test": "vitest run",
@@ -16,7 +19,9 @@
     "@editor/render": "workspace:*",
     "@editor/schemas": "workspace:*",
     "@trigger.dev/sdk": "^4.6.4",
-    "zod": "^4.6.5"
+    "zod": "^4.6.5",
+    "@editor/agent": "workspace:*",
+    "@editor/llm": "workspace:*"
   },
   "devDependencies": {
     "@trigger.dev/build": "^4.6.4",

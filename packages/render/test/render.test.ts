@@ -112,6 +112,28 @@ describe("render (ffmpeg integration)", () => {
     expect(Math.abs(ob - or)).toBeLessThan(or * 0.15 + 0.5);
   }, 90_000);
 
+  it("reframe follows the speaker: crop jumps from the left to the right side", async () => {
+    // Source: testsrc2 bars — yellow at x≈0.33–0.5, blue at x≈0.5–0.67.
+    let t = timeline([{ startMs: 0, endMs: 3000 }]);
+    const kf = (tMs: number, cx: number) => ({ tMs, cx, cy: 0.5, zoom: 1 });
+    t = applyOps(t, [
+      { op: "set_captions_enabled", enabled: false },
+      { op: "set_reframe", track: { id: "left", sourceStartMs: 0, sourceEndMs: 1500, mode: "track", speakerId: "S0", keyframes: [kf(0, 0.42)] } },
+      { op: "set_reframe", track: { id: "right", sourceStartMs: 1500, sourceEndMs: 3000, mode: "track", speakerId: "S1", keyframes: [kf(1500, 0.58)] } },
+    ]).timeline;
+    const { out } = await render(t);
+    // Mean luma of the central vertical strip of the output.
+    const mean = (f: { data: Buffer; width: number; height: number }) => {
+      let sum = 0;
+      let n = 0;
+      for (let y = 0; y < f.height; y++) for (let x = Math.floor(f.width * 0.4); x < f.width * 0.6; x++, n++) sum += f.data[y * f.width + x]!;
+      return sum / n;
+    };
+    const left = mean(await grayFrame(out, 700));
+    const right = mean(await grayFrame(out, 2300));
+    expect(left - right).toBeGreaterThan(60); // yellow is much brighter than blue in luma
+  }, 60_000);
+
   it("same timeline → same plan hash (render cache key)", () => {
     const a = compileTimeline(timeline([{ startMs: 0, endMs: 2000 }]), { quality: "preview", inputSize: { width: 640, height: 360 } });
     const b = compileTimeline(timeline([{ startMs: 0, endMs: 2000 }]), { quality: "preview", inputSize: { width: 640, height: 360 } });

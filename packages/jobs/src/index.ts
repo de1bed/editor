@@ -8,3 +8,4 @@ export { LocalMediaWorker } from "./media/local";
 export { ModalMediaWorker } from "./media/modal";
 export { apiTranscriber, finalizeTranscript } from "./transcribers";
 export { speakerTurns } from "./handlers/build-timeline";
+export { recordFeedback, retrieveExamples } from "./feedback";

@@ -563,3 +563,82 @@ export const styleProfiles = {
     must(await db.from("style_profiles").update({ active_version_id: versionId }).eq("id", profileId).select().single(), "activate style version");
   },
 };
+
+// ------------------------------------------------------------------ feedback
+
+export interface FeedbackInsert {
+  userId: string;
+  projectId: string;
+  clipId: string | null;
+  threadId?: string | null;
+  messageId?: string | null;
+  kind: "approve" | "reject" | "correction" | "instruction";
+  area: string;
+  userText: string | null;
+  scope: "this_clip" | "project" | "always";
+  timelineVersionBefore?: number | null;
+  timelineVersionAfter?: number | null;
+  ops?: EditOp[];
+  jsonPatch?: JsonPatchOp[];
+  profileVersionBefore?: string | null;
+  profileVersionAfter?: string | null;
+  context: { summary: string; transcriptExcerpt?: string; clipFeatures?: Record<string, number | string | boolean> };
+  embedding?: number[] | null;
+  embeddingModel?: string | null;
+}
+
+export interface FeedbackRow extends FeedbackInsert {
+  id: string;
+  createdAt: string;
+}
+
+export const feedback = {
+  async insert(db: Db, f: FeedbackInsert): Promise<string> {
+    const r = await db
+      .from("edit_feedback")
+      .insert({
+        user_id: f.userId,
+        project_id: f.projectId,
+        clip_id: f.clipId,
+        thread_id: f.threadId ?? null,
+        message_id: f.messageId ?? null,
+        kind: f.kind,
+        area: f.area,
+        user_text: f.userText,
+        scope: f.scope,
+        timeline_version_before: f.timelineVersionBefore ?? null,
+        timeline_version_after: f.timelineVersionAfter ?? null,
+        ops: f.ops ?? [],
+        json_patch: f.jsonPatch ?? [],
+        profile_version_before: f.profileVersionBefore ?? null,
+        profile_version_after: f.profileVersionAfter ?? null,
+        context: f.context,
+        // pgvector parses the '[x,y,…]' text form
+        embedding: f.embedding ? JSON.stringify(f.embedding) : null,
+        embedding_model: f.embeddingModel ?? null,
+      })
+      .select("id")
+      .single();
+    return (must(r, "insert feedback") as { id: string }).id;
+  },
+  async recent(db: Db, userId: string, limit = 30): Promise<FeedbackRow[]> {
+    const r = await db.from("edit_feedback").select().eq("user_id", userId).order("created_at", { ascending: false }).limit(limit);
+    return (must(r, "recent feedback") as Row[]).map((x) => ({
+      id: x.id as string,
+      userId: x.user_id as string,
+      projectId: x.project_id as string,
+      clipId: (x.clip_id as string) ?? null,
+      kind: x.kind as FeedbackRow["kind"],
+      area: x.area as string,
+      userText: (x.user_text as string) ?? null,
+      scope: x.scope as FeedbackRow["scope"],
+      ops: (x.ops as EditOp[]) ?? [],
+      profileVersionAfter: (x.profile_version_after as string) ?? null,
+      context: x.context as FeedbackRow["context"],
+      createdAt: x.created_at as string,
+    }));
+  },
+  async setProfileVersionAfter(db: Db, ids: string[], versionId: string) {
+    if (ids.length) await db.from("edit_feedback").update({ profile_version_after: versionId }).in("id", ids);
+  },
+};

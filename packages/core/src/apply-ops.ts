@@ -185,6 +185,19 @@ function applyOne(t: Timeline, op: EditOp): { timeline: Timeline; recensor: bool
       t.reframe = [...trimmed, op.track].sort((a, b) => a.sourceStartMs - b.sourceStartMs);
       return { timeline: t, recensor: false };
     }
+    case "set_reframe_mode": {
+      const start = Math.min(...t.segments.map((x) => x.sourceStartMs));
+      const end = Math.max(...t.segments.map((x) => x.sourceEndMs));
+      if (op.mode === "track") {
+        const tracked = t.reframe.filter((r) => r.keyframes.length > 1 || r.mode === "track");
+        if (!tracked.length) throw new EditOpError("no speaker tracking data for this clip (needs the face analysis worker)");
+        t.reframe = t.reframe.map((r) => ({ ...r, mode: "track" }));
+      } else {
+        const cx = op.cx ?? 0.5;
+        t.reframe = [{ id: "rf_manual", sourceStartMs: start, sourceEndMs: end, mode: op.mode, keyframes: [{ tMs: start, cx, cy: 0.5, zoom: 1 }], interpolation: "hold" }];
+      }
+      return { timeline: t, recensor: false };
+    }
     case "remove_reframe":
       t.reframe = t.reframe.filter((r) => r.id !== op.id);
       return { timeline: t, recensor: false };

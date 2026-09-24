@@ -1,0 +1,14 @@
+{
+  "name": "@editor/llm",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": { ".": "./src/index.ts" },
+  "scripts": { "typecheck": "tsc -p .", "test": "vitest run" },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.128.0",
+    "openai": "^7.23.0",
+    "zod": "^4.6.5"
+  },
+  "devDependencies": { "vitest": "^5.0.1", "typescript": "^5.9.3", "@types/node": "^22.10.0" }
+}

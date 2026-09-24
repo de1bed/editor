@@ -32,6 +32,8 @@ export const EditOp = z
     z.object({ op: z.literal("remove_blur"), id: Id }),
     z.object({ op: z.literal("set_reframe"), track: ReframeTrack }),
     z.object({ op: z.literal("remove_reframe"), id: Id }),
+    /** Whole-clip framing: follow the speaker, a fixed crop (cx = horizontal center), or the full frame over a blurred fill. */
+    z.object({ op: z.literal("set_reframe_mode"), mode: z.enum(["track", "fixed", "fit_blur_bg"]), cx: z.number().min(0).max(1).optional() }),
     z.object({ op: z.literal("add_overlay"), overlay: Overlay }),
     z.object({ op: z.literal("remove_overlay"), id: Id }),
     z.object({ op: z.literal("set_music"), cue: MusicCue.nullable() }),

@@ -69,6 +69,14 @@ describe("applyOps", () => {
     ]);
   });
 
+  it("set_reframe_mode: fixed crop and blurred fill replace speaker tracks", () => {
+    const t = fixtureTimeline();
+    const fixed = applyOps(t, [{ op: "set_reframe_mode", mode: "fixed", cx: 0.3 }]).timeline;
+    expect(fixed.reframe).toMatchObject([{ mode: "fixed", sourceStartMs: 0, sourceEndMs: 10000, keyframes: [{ cx: 0.3 }] }]);
+    expect(applyOps(fixed, [{ op: "set_reframe_mode", mode: "fit_blur_bg" }]).timeline.reframe[0]!.mode).toBe("fit_blur_bg");
+    expect(() => applyOps(t, [{ op: "set_reframe_mode", mode: "track" }])).toThrow(/tracking data/);
+  });
+
   it("property: any sequence of ops yields a valid timeline or a clean EditOpError", () => {
     const base = fixtureTimeline();
     const opArb: fc.Arbitrary<EditOpInput> = fc.oneof(

@@ -261,12 +261,24 @@ class EditOp17(BaseModel):
     id: str = Field(..., max_length=128, min_length=1)
 
 
-class EditOp19(BaseModel):
+class Mode(StrEnum):
+    track = "track"
+    fixed = "fixed"
+    fit_blur_bg = "fit_blur_bg"
+
+
+class EditOp18(BaseModel):
+    op: Literal["set_reframe_mode"]
+    mode: Mode
+    cx: float | None = Field(None, ge=0.0, le=1.0)
+
+
+class EditOp20(BaseModel):
     op: Literal["remove_overlay"]
     id: str = Field(..., max_length=128, min_length=1)
 
 
-class EditOp21(BaseModel):
+class EditOp22(BaseModel):
     op: Literal["set_meta"]
     title: str | None = None
     hookText: str | None = None
@@ -304,7 +316,7 @@ class BlurEffect(BaseModel):
     strength: float = Field(..., ge=0.0, le=100.0)
 
 
-class Mode(StrEnum):
+class Mode1(StrEnum):
     track = "track"
     fixed = "fixed"
     split = "split"
@@ -402,12 +414,12 @@ class EditOp14(BaseModel):
     patch: Patch1
 
 
-class EditOp18(BaseModel):
+class EditOp19(BaseModel):
     op: Literal["add_overlay"]
     overlay: Overlay
 
 
-class EditOp20(BaseModel):
+class EditOp21(BaseModel):
     op: Literal["set_music"]
     cue: MusicCue | None
 
@@ -430,7 +442,7 @@ class ReframeTrack(BaseModel):
     id: str = Field(..., max_length=128, min_length=1)
     sourceStartMs: int = Field(..., ge=0, le=9007199254740991)
     sourceEndMs: int = Field(..., ge=0, le=9007199254740991)
-    mode: Mode
+    mode: Mode1
     speakerId: str | None = None
     keyframes: list[ReframeKeyframe] = Field(..., min_length=1)
     interpolation: Interpolation | None = "linear"
@@ -469,6 +481,7 @@ class EditOp(
         | EditOp19
         | EditOp20
         | EditOp21
+        | EditOp22
     ]
 ):
     root: (
@@ -493,6 +506,7 @@ class EditOp(
         | EditOp19
         | EditOp20
         | EditOp21
+        | EditOp22
     ) = Field(..., title="EditOp")
 
 

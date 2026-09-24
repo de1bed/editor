@@ -1,8 +1,9 @@
 "use client";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import type { Clip, JobRow, MediaAsset, Project } from "@editor/db";
+import { api } from "@/lib/client-api";
 import { fmtMs } from "@/lib/format";
 import { useRealtime } from "@/lib/use-realtime";
 import { JobList } from "./job-list";
@@ -19,6 +20,23 @@ export function ProjectView(props: { project: Project; assets: MediaAsset[]; cli
   const source = assets.find((a) => a.kind === "source");
   const proxy = assets.find((a) => a.kind === "proxy");
   const transcribed = jobs.some((j) => j.type === "transcribe" && j.status === "succeeded");
+  const selecting = jobs.some((j) => j.type === "select_moments" && (j.status === "queued" || j.status === "running"));
+  const [busy, setBusy] = useState(false);
+
+  async function propose() {
+    setBusy(true);
+    try {
+      await api(`/api/projects/${project.id}/propose`, { body: { count: project.settings.clipCount || 5 } });
+      refresh();
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function review(clipId: string, decision: "approve" | "reject") {
+    await api(`/api/clips/${clipId}/review`, { body: { decision } });
+    refresh();
+  }
 
   return (
     <div className="space-y-8">
@@ -43,13 +61,21 @@ export function ProjectView(props: { project: Project; assets: MediaAsset[]; cli
 
       {jobs.length > 0 && <JobList jobs={jobs} onChange={refresh} />}
 
-      {clips.length > 0 && (
+      {(clips.length > 0 || transcribed) && (
         <section>
-          <h2 className="mb-3 text-lg font-semibold">Clips</h2>
+          <div className="mb-3 flex items-center justify-between">
+            <h2 className="text-lg font-semibold">Clips</h2>
+            {transcribed && (
+              <button className="btn-ghost" onClick={propose} disabled={busy || selecting}>
+                {selecting ? "Buscando momentos…" : clips.length ? "Proponer más clips" : "Proponer clips con IA"}
+              </button>
+            )}
+          </div>
+          {clips.length === 0 && <p className="text-sm text-muted">Aún no hay clips. Pídele a la IA que proponga los mejores momentos o crea uno desde la transcripción.</p>}
           <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {clips.map((c) => (
-              <li key={c.id}>
-                <Link href={`/projects/${project.id}/clips/${c.id}`} className="card block p-4 hover:border-neutral-500">
+              <li key={c.id} className={`card flex flex-col ${c.status === "rejected" ? "opacity-50" : ""}`}>
+                <Link href={`/projects/${project.id}/clips/${c.id}`} className="block flex-1 p-4 hover:bg-white/[0.02]">
                   <div className="mb-1 flex items-center justify-between gap-2">
                     <span className="line-clamp-1 font-medium">{c.title || "Sin título"}</span>
                     {c.scores?.total !== undefined && (
@@ -62,6 +88,12 @@ export function ProjectView(props: { project: Project; assets: MediaAsset[]; cli
                   </p>
                   {c.justification && <p className="mt-2 line-clamp-3 text-xs text-neutral-400">{c.justification}</p>}
                 </Link>
+                {c.status === "proposed" && (
+                  <div className="flex border-t border-line text-xs">
+                    <button className="flex-1 py-2 text-emerald-300 hover:bg-white/5" onClick={() => review(c.id, "approve")}>Aprobar</button>
+                    <button className="flex-1 border-l border-line py-2 text-muted hover:bg-white/5" onClick={() => review(c.id, "reject")}>Descartar</button>
+                  </div>
+                )}
               </li>
             ))}
           </ul>

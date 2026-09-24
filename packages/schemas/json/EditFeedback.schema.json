@@ -900,6 +900,32 @@
           "properties": {
             "op": {
               "type": "string",
+              "const": "set_reframe_mode"
+            },
+            "mode": {
+              "type": "string",
+              "enum": [
+                "track",
+                "fixed",
+                "fit_blur_bg"
+              ]
+            },
+            "cx": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            }
+          },
+          "required": [
+            "op",
+            "mode"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "op": {
+              "type": "string",
               "const": "add_overlay"
             },
             "overlay": {

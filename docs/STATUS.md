@@ -22,3 +22,20 @@
 - Las transiciones distintas de corte seco (crossfade, whip) se guardan en el Timeline, pero el render las trata como cortes por ahora.
 - El modo de reencuadre `split` (dos hablantes apilados) cae en `track`.
 - Los blurs de tipo `mask` se renderizan con su caja envolvente; el enmascarado por píxel de SAM 2 queda pendiente.
+
+## Fase 2 — selección automática de clips + reencuadre 9:16 ✅
+
+**Qué quedó**
+- `packages/llm`: capa agnóstica (`LLM_PROVIDER=anthropic|openai`) con salida estructurada validada con Zod (reintenta una vez con el error), bucle de herramientas propio (llamadas en paralelo; los errores vuelven como `is_error`), caché de prompt en Anthropic y embeddings (OpenAI). Modelos por defecto: `claude-opus-5` (agente) y `claude-haiku-4-5` (puntuación masiva).
+- `packages/agent/selectMoments`: divide la transcripción en bloques de 12 min solapados. El modelo rápido propone momentos referenciando **ids de oración** (nunca inventa tiempos) y los puntúa en hook, cierre, autonomía y emoción. El ajuste de duración se calcula de forma determinista a partir del perfil, y se eligen los N mejores sin solapes. El prompt incluye las reglas aprendidas y las decisiones pasadas similares (pgvector).
+- Job `select_moments` (idempotente: reutiliza propuestas con el mismo rango) → `build_timeline` por clip → preview. Se lanza solo tras la transcripción (`clipCount` del proyecto) o con el botón "Proponer clips con IA".
+- Reencuadre: `analyze_faces` (YuNet + asignación de hablante por actividad de boca frente a la diarización) → `planReframe`: tomas por hablante que ignoran interjecciones cortas (< 1,2 s) y una cámara suavizada con zona muerta. En el editor: seguir al que habla / fijo (con posición) / completo con fondo desenfocado.
+- Aprobar o descartar un clip queda registrado como `EditFeedback` con su embedding (base de la fase 4).
+
+**Cómo probarlo**
+- `pnpm test`: `selectMoments` con un LLM falso (ids → tiempos, ranking, bloques solapados, reglas en el prompt), el bucle de herramientas y la salida estructurada del adaptador de Anthropic, `planReframe` y un render real en el que el recorte salta de la barra amarilla a la azul al cambiar de hablante.
+- App: configura `ANTHROPIC_API_KEY` y crea un proyecto con "Clips automáticos" > 0. Al terminar la transcripción aparecen los clips ordenados por puntuación, con su justificación. Con `MEDIA_WORKER=modal`, el encuadre sigue al hablante activo.
+
+**Qué falta**
+- La detección del hablante activo es heurística (movimiento de boca frente a diarización). Un modelo ASD (LR-ASD/TalkNet) mejoraría los casos con varias caras de perfil.
+- El modo `split` (dos hablantes apilados) aún no se renderiza.

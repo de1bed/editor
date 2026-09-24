@@ -85,6 +85,15 @@ export function ClipEditor({ projectId, clipId }: { projectId: string; clipId: s
     }
   }
 
+  async function review(decision: "approve" | "reject") {
+    try {
+      await api(`/api/clips/${clipId}/review`, { body: { decision } });
+      await load();
+    } catch (e) {
+      setErr((e as Error).message);
+    }
+  }
+
   async function undo() {
     if (!status || status.clip.currentVersion === 0) return;
     try {
@@ -112,6 +121,12 @@ export function ClipEditor({ projectId, clipId }: { projectId: string; clipId: s
           </p>
         </div>
         <div className="flex gap-2">
+          {clip.status === "proposed" && (
+            <>
+              <button className="btn-ghost" onClick={() => review("approve")}>Aprobar</button>
+              <button className="btn-ghost" onClick={() => review("reject")}>Descartar</button>
+            </>
+          )}
           <button className="btn-ghost" onClick={undo} disabled={clip.currentVersion === 0}>Deshacer</button>
           <button className="btn-primary" onClick={renderFinal} disabled={!timeline}>Render final 1080×1920</button>
         </div>
@@ -181,10 +196,50 @@ export function ClipEditor({ projectId, clipId }: { projectId: string; clipId: s
             </div>
           )}
           {timeline && <CaptionWords timeline={timeline} onEdit={edit} />}
+          {timeline && <Framing timeline={timeline} onEdit={edit} />}
         </div>
 
         <ChatPanel clipId={clipId} disabled={!timeline} onApplied={load} />
       </div>
+    </div>
+  );
+}
+
+/** 9:16 framing: follow the speaker, fixed crop, or whole frame over a blurred fill. */
+function Framing({ timeline, onEdit }: { timeline: Timeline; onEdit: (ops: EditOpInput[]) => void }) {
+  const mode = timeline.reframe[0]?.mode ?? (timeline.style.resolved.reframe.defaultMode === "fit_blur_bg" ? "fit_blur_bg" : "fixed");
+  const tracked = timeline.reframe.some((r) => r.keyframes.length > 1 || r.speakerId);
+  const cx = timeline.reframe[0]?.keyframes[0]?.cx ?? 0.5;
+  return (
+    <div>
+      <span className="label">Encuadre 9:16</span>
+      <div className="flex flex-wrap gap-2">
+        {([
+          ["track", "Seguir al que habla"],
+          ["fixed", "Fijo"],
+          ["fit_blur_bg", "Completo con fondo desenfocado"],
+        ] as const).map(([m, l]) => (
+          <button
+            key={m}
+            disabled={m === "track" && !tracked}
+            title={m === "track" && !tracked ? "Requiere el análisis de caras (worker GPU)" : undefined}
+            className={`rounded-lg border px-3 py-1.5 text-sm ${mode === m ? "border-accent text-accent" : "border-line hover:bg-white/5"} disabled:opacity-40`}
+            onClick={() => onEdit([{ op: "set_reframe_mode", mode: m }])}
+          >
+            {l}
+          </button>
+        ))}
+      </div>
+      {mode === "fixed" && (
+        <input
+          type="range"
+          min={0}
+          max={100}
+          defaultValue={Math.round(cx * 100)}
+          className="mt-3 w-full"
+          onPointerUp={(e) => onEdit([{ op: "set_reframe_mode", mode: "fixed", cx: Number((e.target as HTMLInputElement).value) / 100 }])}
+        />
+      )}
     </div>
   );
 }

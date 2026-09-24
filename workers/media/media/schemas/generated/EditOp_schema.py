@@ -7,20 +7,20 @@ from pydantic import BaseModel, Field, RootModel
 from enum import StrEnum
 
 
-class EditOp22(BaseModel):
+class EditOp23(BaseModel):
     op: Literal["trim_segment"]
     segmentId: str = Field(..., max_length=128, min_length=1)
     sourceStartMs: int | None = Field(None, ge=0, le=9007199254740991)
     sourceEndMs: int | None = Field(None, ge=0, le=9007199254740991)
 
 
-class EditOp23(BaseModel):
+class EditOp24(BaseModel):
     op: Literal["split_segment"]
     segmentId: str = Field(..., max_length=128, min_length=1)
     atSourceMs: int = Field(..., ge=0, le=9007199254740991)
 
 
-class EditOp24(BaseModel):
+class EditOp25(BaseModel):
     op: Literal["delete_segment"]
     segmentId: str = Field(..., max_length=128, min_length=1)
 
@@ -33,7 +33,7 @@ class OrderItem(RootModel[str]):
     root: str = Field(..., max_length=128, min_length=1)
 
 
-class EditOp26(BaseModel):
+class EditOp27(BaseModel):
     op: Literal["reorder_segments"]
     order: list[OrderItem] = Field(..., min_length=1)
 
@@ -50,13 +50,13 @@ class Transition(BaseModel):
     durationMs: int = Field(..., ge=0, le=9007199254740991)
 
 
-class EditOp27(BaseModel):
+class EditOp28(BaseModel):
     op: Literal["set_transition"]
     segmentId: str = Field(..., max_length=128, min_length=1)
     transition: Transition | None = None
 
 
-class EditOp28(BaseModel):
+class EditOp29(BaseModel):
     op: Literal["edit_caption_word"]
     wordId: str = Field(..., max_length=128, min_length=1)
     text: str | None = None
@@ -125,18 +125,18 @@ class CueId(RootModel[str]):
     root: str = Field(..., max_length=128, min_length=1)
 
 
-class EditOp29(BaseModel):
+class EditOp30(BaseModel):
     op: Literal["set_caption_style"]
     patch: Patch
     cueIds: list[CueId] | None = None
 
 
-class EditOp30(BaseModel):
+class EditOp31(BaseModel):
     op: Literal["set_captions_enabled"]
     enabled: bool
 
 
-class EditOp31(BaseModel):
+class EditOp32(BaseModel):
     op: Literal["regroup_captions"]
     maxWordsPerLine: int | None = Field(None, ge=1, le=12)
 
@@ -146,13 +146,13 @@ class Audio(StrEnum):
     mute = "mute"
 
 
-class EditOp32(BaseModel):
+class EditOp33(BaseModel):
     op: Literal["censor_word"]
     wordId: str = Field(..., max_length=128, min_length=1)
     audio: Audio | None = None
 
 
-class EditOp33(BaseModel):
+class EditOp34(BaseModel):
     op: Literal["uncensor_word"]
     wordId: str = Field(..., max_length=128, min_length=1)
 
@@ -177,22 +177,34 @@ class Mask(BaseModel):
     fps: float = Field(..., gt=0.0)
 
 
-class EditOp36(BaseModel):
+class EditOp37(BaseModel):
     op: Literal["remove_blur"]
     id: str = Field(..., max_length=128, min_length=1)
 
 
-class EditOp38(BaseModel):
+class EditOp39(BaseModel):
     op: Literal["remove_reframe"]
     id: str = Field(..., max_length=128, min_length=1)
 
 
+class Mode(StrEnum):
+    track = "track"
+    fixed = "fixed"
+    fit_blur_bg = "fit_blur_bg"
+
+
 class EditOp40(BaseModel):
+    op: Literal["set_reframe_mode"]
+    mode: Mode
+    cx: float | None = Field(None, ge=0.0, le=1.0)
+
+
+class EditOp42(BaseModel):
     op: Literal["remove_overlay"]
     id: str = Field(..., max_length=128, min_length=1)
 
 
-class EditOp42(BaseModel):
+class EditOp44(BaseModel):
     op: Literal["set_meta"]
     title: str | None = None
     hookText: str | None = None
@@ -230,7 +242,7 @@ class BlurEffect(BaseModel):
     strength: float = Field(..., ge=0.0, le=100.0)
 
 
-class Mode(StrEnum):
+class Mode3(StrEnum):
     track = "track"
     fixed = "fixed"
     split = "split"
@@ -303,7 +315,7 @@ class MusicCue(BaseModel):
     fadeOutMs: int | None = Field(1000, ge=0, le=9007199254740991)
 
 
-class EditOp25(BaseModel):
+class EditOp26(BaseModel):
     op: Literal["insert_segment"]
     afterSegmentId: AfterSegmentId | None
     segment: Segment
@@ -322,18 +334,18 @@ class Patch3(BaseModel):
     detectionTrackId: str | None = Field(None, max_length=128, min_length=1)
 
 
-class EditOp35(BaseModel):
+class EditOp36(BaseModel):
     op: Literal["update_blur"]
     id: str = Field(..., max_length=128, min_length=1)
     patch: Patch3
 
 
-class EditOp39(BaseModel):
+class EditOp41(BaseModel):
     op: Literal["add_overlay"]
     overlay: Overlay
 
 
-class EditOp41(BaseModel):
+class EditOp43(BaseModel):
     op: Literal["set_music"]
     cue: MusicCue | None
 
@@ -356,26 +368,25 @@ class ReframeTrack(BaseModel):
     id: str = Field(..., max_length=128, min_length=1)
     sourceStartMs: int = Field(..., ge=0, le=9007199254740991)
     sourceEndMs: int = Field(..., ge=0, le=9007199254740991)
-    mode: Mode
+    mode: Mode3
     speakerId: str | None = None
     keyframes: list[ReframeKeyframe] = Field(..., min_length=1)
     interpolation: Interpolation | None = "linear"
 
 
-class EditOp34(BaseModel):
+class EditOp35(BaseModel):
     op: Literal["add_blur"]
     region: BlurRegion
 
 
-class EditOp37(BaseModel):
+class EditOp38(BaseModel):
     op: Literal["set_reframe"]
     track: ReframeTrack
 
 
 class EditOp(
     RootModel[
-        EditOp22
-        | EditOp23
+        EditOp23
         | EditOp24
         | EditOp25
         | EditOp26
@@ -395,11 +406,12 @@ class EditOp(
         | EditOp40
         | EditOp41
         | EditOp42
+        | EditOp43
+        | EditOp44
     ]
 ):
     root: (
-        EditOp22
-        | EditOp23
+        EditOp23
         | EditOp24
         | EditOp25
         | EditOp26
@@ -419,6 +431,8 @@ class EditOp(
         | EditOp40
         | EditOp41
         | EditOp42
+        | EditOp43
+        | EditOp44
     ) = Field(..., title="EditOp")
 
 
