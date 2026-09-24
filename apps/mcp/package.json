@@ -1,0 +1,23 @@
+{
+  "name": "@editor/mcp",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "bin": { "editor-mcp": "./src/cli.ts" },
+  "scripts": {
+    "start:stdio": "tsx src/cli.ts stdio",
+    "start:http": "tsx src/cli.ts http",
+    "typecheck": "tsc -p .",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@editor/db": "workspace:*",
+    "@editor/jobs": "workspace:*",
+    "@editor/llm": "workspace:*",
+    "@editor/schemas": "workspace:*",
+    "@editor/tools": "workspace:*",
+    "@modelcontextprotocol/sdk": "^1.30.1",
+    "zod": "^4.6.5"
+  },
+  "devDependencies": { "tsx": "^4.23.15", "vitest": "^5.0.1", "typescript": "^5.9.3", "@types/node": "^22.10.0" }
+}

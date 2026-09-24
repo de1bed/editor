@@ -3,6 +3,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import type { StyleProfileVersionRow } from "@editor/db";
 import { api } from "@/lib/client-api";
+import { McpTokens } from "./mcp-tokens";
 
 type Change = { path: string; value: string | number | boolean };
 
@@ -80,6 +81,7 @@ export function StyleView({ active, history }: { profileId: string; active: Styl
             </ul>
           )}
         </div>
+        <McpTokens />
       </section>
       <aside className="card p-4">
         <h2 className="mb-3 text-sm font-semibold">Historial</h2>

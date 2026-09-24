@@ -77,3 +77,26 @@
 **Qué falta**
 - Las respuestas del chat no se transmiten en streaming: se muestra “Editando…” hasta que termina el turno.
 - Hacen falta evals con conversaciones reales para ajustar los prompts del clasificador y del aprendiz.
+
+## Fase 5 — servidor MCP y export OTIO ✅
+
+**Qué quedó**
+- `apps/mcp`: servidor MCP con transporte **stdio** (Claude Desktop/Code) y **Streamable HTTP** sin estado (`POST /mcp`). Registra las mismas herramientas que el agente interno a partir de `packages/tools` (un solo origen). Se autentica con **tokens personales** (`edmcp_…`, guardados como sha256, revocables, con ámbitos `read`/`edit`/`render`). Cada llamada comprueba que las entidades pertenecen al dueño del token.
+- La UI de *Mi estilo* permite crear, listar y revocar tokens.
+- Export **OTIO** (`timelineToOtio`): un Clip por segmento en V1 y A1 con los rangos exactos del original, y bips, blurs y cambios de cámara como marcadores. Incluye además **SRT** y **ASS**. Disponible como botón en el editor, como herramienta del agente y como herramienta MCP. Los archivos se suben a Storage y se devuelven URLs firmadas.
+
+**Cómo probarlo**
+- `pnpm test`: el cliente MCP en memoria lista las herramientas con sus JSON Schemas, un token de solo lectura no ve las herramientas de edición, las llamadas corren como el dueño y las entidades ajenas devuelven “not found”. OTIO: clips y rangos exactos, marcadores de censura. SRT en tiempo de salida con las palabras enmascaradas.
+- Manual: crea un token en *Mi estilo*, configura Claude Desktop como en el README y pide “lista mis proyectos y exporta el primer clip a OTIO”.
+
+**Qué falta**
+- OAuth para el servidor MCP remoto (ahora usa tokens personales).
+- Resolve importa `.otio` de forma nativa; Premiere necesita el plugin de OTIO o convertirlo con `otioconvert` a FCP7 XML.
+
+---
+
+## Pendiente transversal
+- Probar de punta a punta contra Supabase, Modal y Trigger.dev reales con credenciales. En este entorno no hubo acceso a esos servicios; todo lo demás está cubierto por tests de unidad e integración.
+- Modo Reels (edición libre a partir de material crudo): reutiliza el mismo Timeline/motor. Falta la UI de *timeline* multi-fuente (`Segment` ya admite cualquier rango y orden).
+- Crossfade/whip, `split` de dos hablantes, blur por máscara de píxel, música con biblioteca y licencias.
+- Evals de las prompts (selección de momentos, clasificación de feedback, aprendiz) con datos reales del usuario.

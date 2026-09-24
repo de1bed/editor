@@ -10,9 +10,12 @@ El plan de arquitectura completo está en [`docs/PLAN.md`](docs/PLAN.md).
 
 ```
 apps/web            Next.js 16 (App Router) + Tailwind 4: UI, API, chat del agente
-apps/mcp            Servidor MCP (fase 5)
+apps/mcp            Servidor MCP (stdio + Streamable HTTP) con las mismas herramientas que el agente
 packages/schemas    Zod (fuente de verdad) → JSON Schema (json/) → modelos Pydantic
-packages/core       Lógica pura: Timeline, EditOps, censura, subtítulos ASS, compilador → FFmpeg, reencuadre
+packages/core       Lógica pura: Timeline, EditOps, censura, subtítulos ASS, compilador → FFmpeg, reencuadre, OTIO/SRT
+packages/llm        Capa LLM agnóstica (Anthropic / OpenAI) + embeddings
+packages/agent      Selección de momentos y aprendizaje del perfil de estilo
+packages/tools      Registro único de herramientas (agente interno + MCP) y el orquestador del chat
 packages/render     Ejecutor local de RenderPlans (ffmpeg) + utilidades de medición
 packages/db         Repositorios Supabase y almacenamiento
 packages/jobs       Orquestación: jobs idempotentes, runner inline / Trigger.dev, workers Modal/local
@@ -69,6 +72,34 @@ pnpm dev            # http://localhost:3000
 ```
 
 Flujo de la fase 1: **Nuevo proyecto → subir video → (ingesta + transcripción) → seleccionar un fragmento en la transcripción → Crear clip → preview → Render final 1080×1920**.
+
+### 5. Servidor MCP
+
+El servidor MCP expone las mismas herramientas que usa el asistente interno: `list_projects`, `list_clips`, `get_transcript`, `propose_clips`, `get_timeline`, `patch_timeline`, `add_blur_region`, `detect_objects`, `get_detections`, `set_censorship`, `get_style_profile`, `update_style_profile`, `render_preview`, `render_final`, `get_clip`, `get_job` y `export_otio`.
+
+1. En la app, ve a **Mi estilo → Tokens MCP** y crea un token (se muestra una sola vez; en la base de datos solo se guarda su hash).
+2. **stdio** (Claude Desktop o Claude Code):
+   ```json
+   {
+     "mcpServers": {
+       "editor-ia": {
+         "command": "pnpm",
+         "args": ["--dir", "/ruta/al/repo/apps/mcp", "start:stdio"],
+         "env": { "MCP_TOKEN": "edmcp_…", "SUPABASE_URL": "…", "SUPABASE_SERVICE_ROLE_KEY": "…", "JOB_RUNNER": "trigger", "TRIGGER_SECRET_KEY": "…" }
+       }
+     }
+   }
+   ```
+3. **HTTP** (clientes remotos): `pnpm --filter @editor/mcp start:http` → `POST http://host:8787/mcp` con `Authorization: Bearer edmcp_…`. El servidor no guarda sesión; cada token tiene ámbitos (`read` / `edit` / `render`).
+
+### 6. Exportar a DaVinci Resolve / Premiere
+
+En el editor del clip, **Exportar OTIO** (o la herramienta `export_otio`) genera tres archivos:
+
+- `.otio`: los cortes exactos sobre el video original en V1/A1, con los bips, blurs y cambios de cámara como marcadores.
+- `.srt` y `.ass`: los subtítulos.
+
+El reencuadre 9:16 y el blur no se pueden representar en OTIO; van descritos en los metadatos. En Resolve: *File → Import → Timeline* y reenlaza el video original.
 
 ## Tests
 

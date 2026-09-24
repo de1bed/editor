@@ -38,6 +38,7 @@ export function ClipEditor({ projectId, clipId }: { projectId: string; clipId: s
   const [err, setErr] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [drawing, setDrawing] = useState(false);
+  const [exports, setExports] = useState<Record<string, string> | null>(null);
 
   const load = useCallback(async () => {
     try {
@@ -114,6 +115,16 @@ export function ClipEditor({ projectId, clipId }: { projectId: string; clipId: s
     }
   }
 
+  async function exportOtio() {
+    setErr(null);
+    try {
+      const r = await api<{ urls: Record<string, string> }>(`/api/clips/${clipId}/export`, { method: "POST" });
+      setExports(r.urls);
+    } catch (e) {
+      setErr((e as Error).message);
+    }
+  }
+
   async function undo() {
     if (!status || status.clip.currentVersion === 0) return;
     try {
@@ -148,6 +159,7 @@ export function ClipEditor({ projectId, clipId }: { projectId: string; clipId: s
             </>
           )}
           <button className="btn-ghost" onClick={undo} disabled={clip.currentVersion === 0}>Deshacer</button>
+          <button className="btn-ghost" onClick={exportOtio} disabled={!timeline} title="Abrir en DaVinci Resolve / Premiere">Exportar OTIO</button>
           <button className="btn-primary" onClick={renderFinal} disabled={!timeline}>Render final 1080×1920</button>
         </div>
       </div>
@@ -167,6 +179,14 @@ export function ClipEditor({ projectId, clipId }: { projectId: string; clipId: s
               ) : (
                 <span className="text-muted">Render final en curso…</span>
               )}
+            </div>
+          )}
+          {exports && (
+            <div className="card space-y-1 p-3 text-sm">
+              <p className="text-xs text-muted">Para DaVinci Resolve / Premiere (reenlaza el video original si la ruta cambia):</p>
+              {Object.entries(exports).map(([ext, url]) => (
+                <a key={ext} href={url} className="mr-3 text-accent hover:underline" download>.{ext}</a>
+              ))}
             </div>
           )}
           {clip.justification && <p className="text-xs text-muted">Por qué este clip: {clip.justification}</p>}
