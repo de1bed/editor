@@ -1,0 +1,36 @@
+@import "tailwindcss";
+
+@theme {
+  --color-ink: #0b0d10;
+  --color-panel: #14171c;
+  --color-line: #262a31;
+  --color-muted: #8b93a1;
+  --color-accent: #ffd400;
+  --color-accent-ink: #1a1600;
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+html,
+body {
+  background: var(--color-ink);
+  color: #e8ebf0;
+}
+
+@utility btn {
+  @apply inline-flex items-center justify-center gap-2 rounded-lg px-3.5 py-2 text-sm font-medium transition disabled:cursor-not-allowed disabled:opacity-50;
+}
+@utility btn-primary {
+  @apply btn bg-accent text-accent-ink hover:brightness-110;
+}
+@utility btn-ghost {
+  @apply btn border border-line bg-transparent text-neutral-200 hover:bg-white/5;
+}
+@utility card {
+  @apply rounded-xl border border-line bg-panel;
+}
+@utility input {
+  @apply w-full rounded-lg border border-line bg-ink px-3 py-2 text-sm outline-none focus:border-accent;
+}
+@utility label {
+  @apply mb-1 block text-xs font-medium tracking-wide text-muted uppercase;
+}

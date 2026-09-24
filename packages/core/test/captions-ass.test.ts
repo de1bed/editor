@@ -38,7 +38,7 @@ describe("ASS generation", () => {
     const t = fixtureTimeline();
     const ass = timelineToAss(t);
     expect(ass).toContain("PlayResX: 1080");
-    expect(ass).toMatch(/Style: Caption,Montserrat ExtraBold,72,/);
+    expect(ass).toMatch(/Style: Caption,Montserrat ExtraBold,84,/);
     const dialogues = ass.split("\n").filter((l) => l.startsWith("Dialogue:"));
     expect(dialogues).toHaveLength(FIXTURE_TRANSCRIPT.words.length);
     // Masked profanity is drawn, the original is not.

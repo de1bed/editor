@@ -1,7 +1,10 @@
 import { mkdtemp, rm, stat } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import type { AnalyzeFacesRequest, DetectRequest, IngestRequest, RenderRequest, TranscribeRequest } from "@editor/schemas";
+import { execFile } from "node:child_process";
+import { readdir } from "node:fs/promises";
+import { promisify } from "node:util";
+import type { AnalyzeFacesRequest, DetectRequest, FetchUrlRequest, IngestRequest, RenderRequest, TranscribeRequest } from "@editor/schemas";
 import { type Db, downloadTo, signedUrl, uploadFrom } from "@editor/db";
 import { executeRenderPlan, extractAudio, makeProxy, probe, thumbnail } from "@editor/render";
 import { type MediaWorker, MediaWorkerError, type RequestInput } from "./worker";
@@ -21,6 +24,30 @@ export class LocalMediaWorker implements MediaWorker {
     private readonly db: Db,
     private readonly onProgress: Progress = () => {},
   ) {}
+
+  /** Needs the `yt-dlp` binary on PATH. */
+  async fetchUrl(req: RequestInput<FetchUrlRequest>) {
+    const dir = await mkdtemp(join(tmpdir(), "fetch-"));
+    try {
+      this.onProgress(0.02, "download");
+      const height = req.maxHeight ?? 1080;
+      const { stdout } = await promisify(execFile)(
+        process.env.YTDLP_PATH ?? "yt-dlp",
+        ["--no-playlist", "--no-progress", "-f", `bv*[height<=${height}]+ba/b[height<=${height}]`, "--merge-output-format", "mp4", "-o", join(dir, "video.%(ext)s"), "--print", "after_move:%(title)s", req.url],
+        { maxBuffer: 1 << 20, timeout: 3 * 3600_000 },
+      ).catch((e: Error) => {
+        throw new MediaWorkerError(`yt-dlp failed: ${e.message}`);
+      });
+      const file = (await readdir(dir)).find((f) => f.startsWith("video."));
+      if (!file) throw new MediaWorkerError("yt-dlp produced no file");
+      this.onProgress(0.8, "upload");
+      const bytes = await uploadFrom(this.db, join(dir, file), req.out, "video/mp4");
+      const info = await probe(join(dir, file));
+      return { out: req.out, bytes, title: stdout.trim().split("\n").pop() ?? "", durationMs: info.durationMs || null, mimeType: "video/mp4" };
+    } finally {
+      await rm(dir, { recursive: true, force: true });
+    }
+  }
 
   async ingest(req: RequestInput<IngestRequest>) {
     const dir = await mkdtemp(join(tmpdir(), "ingest-"));

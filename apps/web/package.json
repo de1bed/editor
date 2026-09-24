@@ -1,0 +1,41 @@
+{
+  "name": "@editor/web",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build --webpack",
+    "start": "next start",
+    "typecheck": "next typegen && tsc --noEmit",
+    "test": "vitest run --passWithNoTests",
+    "predev": "node scripts/copy-assets.mjs",
+    "prebuild": "node scripts/copy-assets.mjs",
+    "dev:fixture": "tsx scripts/render-dev-fixture.ts"
+  },
+  "dependencies": {
+    "@editor/core": "workspace:*",
+    "@editor/db": "workspace:*",
+    "@editor/jobs": "workspace:*",
+    "@editor/schemas": "workspace:*",
+    "@supabase/ssr": "^0.12.7",
+    "@supabase/supabase-js": "^2.117.1",
+    "jassub": "^2.5.16",
+    "next": "^16.3.6",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "tus-js-client": "^4.3.1",
+    "zod": "^4.6.5"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.3.3",
+    "@types/node": "^22.10.0",
+    "@types/react": "^19.1.0",
+    "@types/react-dom": "^19.1.0",
+    "tailwindcss": "^4.3.3",
+    "typescript": "^5.9.3",
+    "vitest": "^5.0.1",
+    "tsx": "^4.23.15",
+    "@editor/render": "workspace:*"
+  }
+}

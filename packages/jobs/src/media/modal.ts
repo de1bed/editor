@@ -1,4 +1,4 @@
-import { DetectionTrack, FaceAnalysis, IngestResult, RenderResult, TranscribeResult } from "@editor/schemas";
+import { DetectionTrack, FaceAnalysis, FetchUrlResult, IngestResult, RenderResult, TranscribeResult } from "@editor/schemas";
 import { z } from "zod";
 import { config } from "../env";
 import type { JobRuntime } from "../runtime";
@@ -44,6 +44,9 @@ export class ModalMediaWorker implements MediaWorker {
     }
   }
 
+  fetchUrl(req: RequestInput<import("@editor/schemas").FetchUrlRequest>) {
+    return this.call("fetch_url", req, FetchUrlResult);
+  }
   ingest(req: RequestInput<import("@editor/schemas").IngestRequest>) {
     return this.call("ingest", req, IngestResult);
   }

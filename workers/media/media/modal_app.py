@@ -8,7 +8,7 @@ Secrets (create in Modal):
   editor-hf       : HF_TOKEN (pyannote diarization models are gated; accept their terms first)
 
 HTTP API (FastAPI, bearer MEDIA_WORKER_TOKEN):
-  POST /ops/{op}        body = request JSON → {"callId"}   (op: ingest|transcribe|analyze_faces|detect_objects|render)
+  POST /ops/{op}        body = request JSON → {"callId"}   (op: fetch_url|ingest|transcribe|analyze_faces|detect_objects|render)
   GET  /calls/{callId}  → {"status": "running"} | {"status": "succeeded", "result": …} | {"status": "failed", "error": …}
 """
 
@@ -36,7 +36,7 @@ base_env = {"MEDIA_FONTS_DIR": "/assets/fonts", "HF_HOME": "/models/hf", "PYTHON
 cpu_image = (
     modal.Image.debian_slim(python_version="3.11")
     .apt_install("ffmpeg", "fonts-dejavu-core")
-    .pip_install("pydantic>=2.9", "httpx>=0.27", "numpy>=1.26")
+    .pip_install("pydantic>=2.9", "httpx>=0.27", "numpy>=1.26", "yt-dlp")
     .env(base_env)
     .add_local_dir(str(FONTS), "/assets/fonts")
     .add_local_python_source("media")
@@ -76,6 +76,11 @@ def _run(op: str, raw: dict) -> dict:
 @app.function(image=cpu_image, secrets=[supabase], cpu=4.0, memory=8192, timeout=4 * 3600, ephemeral_disk=200 * 1024)
 def ingest(raw: dict) -> dict:
     return _run("ingest", raw)
+
+
+@app.function(image=cpu_image, secrets=[supabase], cpu=2.0, memory=4096, timeout=4 * 3600, ephemeral_disk=100 * 1024)
+def fetch_url(raw: dict) -> dict:
+    return _run("fetch_url", raw)
 
 
 @app.function(image=cpu_image, secrets=[supabase], cpu=8.0, memory=8192, timeout=2 * 3600)
@@ -126,6 +131,7 @@ def api():
 
     web = FastAPI(title="editor-media")
     spawners = {
+        "fetch_url": fetch_url.spawn,
         "ingest": ingest.spawn,
         "render": render.spawn,
         "transcribe": Transcriber().run.spawn,

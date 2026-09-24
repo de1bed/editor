@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 export const JobType = z.enum([
+  "fetch_url",
   "ingest",
   "transcribe",
   "select_moments",

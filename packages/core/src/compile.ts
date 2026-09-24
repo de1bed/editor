@@ -12,6 +12,12 @@ export interface CompileOptions {
   inputHasAudio?: boolean;
   /** Preview is rendered at this fraction of the output size. */
   previewScale?: number;
+  /**
+   * "burn" draws captions and text overlays into the video. "none" leaves them
+   * out: the editor draws the same ASS live over the preview (JASSUB), so
+   * caption-only edits need no re-render (and hit the plan-hash cache).
+   */
+  captions?: "burn" | "none";
 }
 
 const QUALITY = {
@@ -152,8 +158,8 @@ export function compileTimeline(t: Timeline, opts: CompileOptions): RenderPlan {
   }
 
   // ---- captions and text overlays
-  const ass = timelineToAss(t);
-  const needsAss = (t.captions.enabled && t.captions.cues.length > 0) || t.overlays.some((o) => o.type === "text");
+  const ass = needsAssFor(t, opts) ? timelineToAss(t) : "";
+  const needsAss = needsAssFor(t, opts);
   if (needsAss) {
     filters.push(`[${vLabel}]ass=filename='{{file:captions.ass}}':fontsdir='{{fontsdir}}'[vout]`);
   } else {
@@ -241,6 +247,10 @@ export function compileTimeline(t: Timeline, opts: CompileOptions): RenderPlan {
 }
 
 // ---------------------------------------------------------------- helpers
+
+function needsAssFor(t: Timeline, opts: CompileOptions): boolean {
+  return (opts.captions ?? "burn") === "burn" && ((t.captions.enabled && t.captions.cues.length > 0) || t.overlays.some((o) => o.type === "text"));
+}
 
 function even(n: number): number {
   return Math.max(2, Math.round(n / 2) * 2);

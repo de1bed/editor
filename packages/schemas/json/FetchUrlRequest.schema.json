@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$ref": "#/$defs/FetchUrlRequest",
+  "$defs": {
+    "FetchUrlRequest": {
+      "type": "object",
+      "properties": {
+        "jobId": {
+          "default": null,
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "url": {
+          "type": "string",
+          "format": "uri"
+        },
+        "out": {
+          "$ref": "#/$defs/StorageRef"
+        },
+        "maxHeight": {
+          "default": 1080,
+          "type": "integer",
+          "minimum": 240,
+          "maximum": 2160
+        }
+      },
+      "required": [
+        "url",
+        "out"
+      ],
+      "title": "FetchUrlRequest"
+    },
+    "StorageRef": {
+      "type": "object",
+      "properties": {
+        "bucket": {
+          "type": "string",
+          "minLength": 1
+        },
+        "path": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "bucket",
+        "path"
+      ]
+    }
+  },
+  "$id": "https://editor.local/schemas/FetchUrlRequest.schema.json"
+}

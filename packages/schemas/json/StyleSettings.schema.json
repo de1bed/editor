@@ -9,7 +9,7 @@
           "default": {
             "fontFamily": "Montserrat",
             "fontWeight": 800,
-            "fontSizePx": 72,
+            "fontSizePx": 84,
             "textColor": "#FFFFFF",
             "highlightColor": "#FFD400",
             "strokeColor": "#000000",
@@ -296,7 +296,7 @@
           "maximum": 900
         },
         "fontSizePx": {
-          "default": 72,
+          "default": 84,
           "type": "number",
           "minimum": 8,
           "maximum": 300

@@ -16,3 +16,7 @@ __pycache__/
 tmp/
 out/
 .DS_Store
+public/fonts/
+next-env.d.ts
+public/dev-fixture/
+*.tsbuildinfo

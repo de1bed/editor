@@ -19,6 +19,8 @@ export function renderJob(quality: "preview" | "final"): JobHandler {
       quality,
       inputSize: { width: decoded.width, height: decoded.height },
       inputHasAudio: decoded.kind === "proxy" ? true : (source.hasAudio ?? true),
+      // Previews are watched in the editor, which draws captions live on top.
+      captions: quality === "preview" && input.burnCaptions !== true ? "none" : "burn",
     });
 
     const existing = await renders.findByHash(ctx.db, clipId, plan.hash);

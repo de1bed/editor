@@ -27,6 +27,17 @@ describe("compileTimeline", () => {
     expect(plan.files["captions.ass"]).toContain("[Events]");
   });
 
+  it("can leave captions out (live overlay in the editor) so caption edits reuse the render", async () => {
+    const { applyOps } = await import("../src/apply-ops");
+    const t = fixtureTimeline();
+    const a = compileTimeline(t, { ...opts, captions: "none" });
+    expect(a.files).toEqual({});
+    expect(a.args.join(" ")).not.toContain("ass=");
+    const restyled = applyOps(t, [{ op: "set_caption_style", patch: { fontSizePx: 99 } }]).timeline;
+    expect(compileTimeline(restyled, { ...opts, captions: "none" }).hash).toBe(a.hash);
+    expect(compileTimeline(restyled, opts).hash).not.toBe(compileTimeline(t, opts).hash);
+  });
+
   it("adds bleeps for censored words", () => {
     const fc = compileTimeline(fixtureTimeline(), opts).args.find((a) => a.includes("concat="))!;
     expect(fc).toMatch(/sine=frequency=1000/);

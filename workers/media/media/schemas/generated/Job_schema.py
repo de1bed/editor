@@ -8,6 +8,7 @@ from typing import Any
 
 
 class Type(StrEnum):
+    fetch_url = "fetch_url"
     ingest = "ingest"
     transcribe = "transcribe"
     select_moments = "select_moments"

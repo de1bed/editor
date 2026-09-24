@@ -11,6 +11,19 @@ export type StorageRef = z.infer<typeof StorageRef>;
 
 const Base = z.object({ jobId: z.string().nullable().default(null) });
 
+/** Downloads a remote video (YouTube, behind a feature flag) into storage. */
+export const FetchUrlRequest = Base.extend({
+  url: z.url(),
+  out: StorageRef,
+  maxHeight: z.int().min(240).max(2160).default(1080),
+}).meta({ id: "FetchUrlRequest", title: "FetchUrlRequest" });
+export type FetchUrlRequest = z.infer<typeof FetchUrlRequest>;
+
+export const FetchUrlResult = z
+  .object({ out: StorageRef, bytes: z.int().nonnegative(), title: z.string(), durationMs: Ms.nullable(), mimeType: z.string() })
+  .meta({ id: "FetchUrlResult", title: "FetchUrlResult" });
+export type FetchUrlResult = z.infer<typeof FetchUrlResult>;
+
 export const IngestRequest = Base.extend({
   source: StorageRef,
   proxyOut: StorageRef,

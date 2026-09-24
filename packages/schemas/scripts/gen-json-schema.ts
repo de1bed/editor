@@ -23,6 +23,8 @@ const targets: Record<string, z.ZodType> = {
   FaceAnalysis: S.FaceAnalysis,
   RenderPlan: S.RenderPlan,
   Job: S.Job,
+  FetchUrlRequest: S.FetchUrlRequest,
+  FetchUrlResult: S.FetchUrlResult,
   IngestRequest: S.IngestRequest,
   IngestResult: S.IngestResult,
   TranscribeRequest: S.TranscribeRequest,

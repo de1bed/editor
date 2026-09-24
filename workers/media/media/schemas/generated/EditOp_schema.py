@@ -106,7 +106,7 @@ class Emphasis(BaseModel):
 class Patch(BaseModel):
     fontFamily: str | None = "Montserrat"
     fontWeight: int | None = Field(800, ge=100, le=900)
-    fontSizePx: float | None = Field(72, ge=8.0, le=300.0)
+    fontSizePx: float | None = Field(84, ge=8.0, le=300.0)
     textColor: str | None = Field("#FFFFFF", pattern="^#[0-9a-fA-F]{6}([0-9a-fA-F]{2})?$")
     highlightColor: str | None = Field("#FFD400", pattern="^#[0-9a-fA-F]{6}([0-9a-fA-F]{2})?$")
     strokeColor: str | None = Field("#000000", pattern="^#[0-9a-fA-F]{6}([0-9a-fA-F]{2})?$")

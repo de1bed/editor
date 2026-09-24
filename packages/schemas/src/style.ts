@@ -9,7 +9,7 @@ export const CaptionStyle = z
     fontFamily: z.string().default("Montserrat"),
     fontWeight: z.int().min(100).max(900).default(800),
     /** Font size in px relative to a 1080px-wide frame. */
-    fontSizePx: z.number().min(8).max(300).default(72),
+    fontSizePx: z.number().min(8).max(300).default(84),
     textColor: Hex.default("#FFFFFF"),
     highlightColor: Hex.default("#FFD400"),
     strokeColor: Hex.default("#000000"),

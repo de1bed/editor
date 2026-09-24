@@ -1,6 +1,8 @@
 import type {
   AnalyzeFacesRequest,
   DetectRequest,
+  FetchUrlRequest,
+  FetchUrlResult,
   DetectionTrack,
   FaceAnalysis,
   IngestRequest,
@@ -17,6 +19,7 @@ export type RequestInput<T> = Omit<T, "jobId"> & { jobId?: string | null };
 export interface MediaWorker {
   readonly name: string;
   readonly capabilities: { transcribe: boolean; faces: boolean; detect: boolean };
+  fetchUrl(req: RequestInput<FetchUrlRequest>): Promise<FetchUrlResult>;
   ingest(req: RequestInput<IngestRequest>): Promise<IngestResult>;
   transcribe(req: RequestInput<TranscribeRequest>): Promise<TranscribeResult>;
   analyzeFaces(req: RequestInput<AnalyzeFacesRequest>): Promise<FaceAnalysis>;

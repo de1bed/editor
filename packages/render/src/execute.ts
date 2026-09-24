@@ -1,11 +1,12 @@
 import { spawn } from "node:child_process";
 import { mkdtemp, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
-import { join, resolve } from "node:path";
+import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import type { RenderPlan } from "@editor/schemas";
 
-export const DEFAULT_FONTS_DIR = resolve(fileURLToPath(new URL("../../../assets/fonts", import.meta.url)));
+// Resolved from this file's path (not `new URL(..., import.meta.url)`, which bundlers treat as an asset import).
+export const DEFAULT_FONTS_DIR = resolve(dirname(fileURLToPath(import.meta.url)), "..", "..", "..", "assets", "fonts");
 
 export interface ExecuteOptions {
   /** Local path or http(s) URL for each input key of the plan. */

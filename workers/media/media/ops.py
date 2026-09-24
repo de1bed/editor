@@ -143,3 +143,36 @@ OPS = {
     "detect_objects": detect_objects,
     "render": render,
 }
+
+
+def fetch_url(raw: dict, storage: Storage, reporter: JobReporter | None = None) -> dict:
+    """Downloads a remote video with yt-dlp (only reachable behind the YouTube feature flag)."""
+    import subprocess
+
+    from .schemas.generated.FetchUrlRequest_schema import FetchUrlRequest
+
+    req = FetchUrlRequest.model_validate(raw)
+    rep = reporter or NullReporter()
+    h = req.maxHeight
+    with tempfile.TemporaryDirectory(prefix="fetch-") as d:
+        rep.progress(0.02, "download")
+        proc = subprocess.run(
+            [
+                "yt-dlp", "--no-playlist", "--no-progress",
+                "-f", f"bv*[height<={h}]+ba/b[height<={h}]", "--merge-output-format", "mp4",
+                "-o", str(Path(d) / "video.%(ext)s"), "--print", "after_move:%(title)s", str(req.url),
+            ],
+            capture_output=True, text=True, timeout=3 * 3600,
+        )
+        if proc.returncode != 0:
+            raise RuntimeError(f"yt-dlp failed: {proc.stderr[-2000:]}")
+        file = next(Path(d).glob("video.*"))
+        rep.progress(0.8, "upload")
+        size = storage.upload(file, Ref.of(req.out), "video/mp4")
+        dur = ffmpeg.probe(file)["durationMs"]
+    rep.progress(1.0, "done")
+    title = proc.stdout.strip().splitlines()[-1] if proc.stdout.strip() else ""
+    return {"out": {"bucket": req.out.bucket, "path": req.out.path}, "bytes": size, "title": title, "durationMs": dur or None, "mimeType": "video/mp4"}
+
+
+OPS["fetch_url"] = fetch_url

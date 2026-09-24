@@ -1,6 +1,7 @@
 {
   "name": "editor",
   "private": true,
+  "type": "module",
   "packageManager": "pnpm@10.33.0",
   "engines": {
     "node": ">=22"
@@ -13,7 +14,10 @@
     "lint": "turbo run lint",
     "gen:schemas": "pnpm --filter @editor/schemas gen",
     "gen:fixtures": "bash scripts/gen-fixture.sh",
-    "check:schemas": "pnpm gen:schemas && git diff --exit-code packages/schemas/json workers/media/media/schemas"
+    "check:schemas": "pnpm gen:schemas && git diff --exit-code packages/schemas/json workers/media/media/schemas",
+    "test:py": "cd workers/media && uv run pytest -q",
+    "test:db": "bash scripts/test-migrations.sh",
+    "test:all": "pnpm test && pnpm test:py && pnpm test:db"
   },
   "devDependencies": {
     "turbo": "^2.11.3",
@@ -22,6 +26,7 @@
     "vitest": "^5.0.1",
     "tsx": "^4.23.15",
     "@editor/core": "workspace:*",
-    "@editor/schemas": "workspace:*"
+    "@editor/schemas": "workspace:*",
+    "@editor/render": "workspace:*"
   }
 }
