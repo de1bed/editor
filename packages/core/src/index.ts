@@ -11,3 +11,4 @@ export * from "./build-timeline";
 export * from "./validate";
 export * from "./json-diff";
 export * from "./apply-ops";
+export * from "./reframe";

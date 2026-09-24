@@ -99,6 +99,16 @@ create table public.transcripts (
 );
 create index on public.transcripts using gin (text_search);
 
+create or replace function public.transcripts_text_search() returns trigger
+language plpgsql as $$
+begin
+  new.text_search := to_tsvector('simple', coalesce(
+    (select string_agg(w->>'text', ' ') from jsonb_array_elements(new.data->'words') w), ''));
+  return new;
+end $$;
+create trigger transcripts_text_search before insert or update of data on public.transcripts
+  for each row execute function public.transcripts_text_search();
+
 create table public.face_analyses (
   id uuid primary key default gen_random_uuid(),
   user_id uuid not null default auth.uid() references auth.users (id) on delete cascade,

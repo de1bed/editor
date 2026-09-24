@@ -14,6 +14,14 @@ insert into public.clips (id, project_id, source_asset_id, source_start_ms, sour
 insert into public.timeline_versions (clip_id, version, timeline, author)
   values ('30000000-0000-0000-0000-000000000001', 0, '{"version":0}', 'system');
 
+insert into public.transcripts (asset_id, provider, language, data)
+  values ('20000000-0000-0000-0000-000000000001', 'fixture', 'es', '{"words":[{"text":"hola"},{"text":"mundo"}]}');
+do $$ begin
+  if not exists (select 1 from public.transcripts where text_search @@ to_tsquery('simple', 'mundo')) then
+    raise exception 'transcript full-text search not populated';
+  end if;
+end $$;
+
 -- commit v1 ok
 select public.commit_timeline_version('30000000-0000-0000-0000-000000000001', 0, '{"version":0,"x":1}', '[]', '[]', 'user') as v1;
 do $$ begin

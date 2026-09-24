@@ -32,7 +32,8 @@ export async function executeRenderPlan(plan: RenderPlan, opts: ExecuteOptions):
     }
     const inputs: Record<string, string> = {};
     for (const [key, input] of Object.entries(plan.inputs)) inputs[key] = await opts.resolveInput(key, input);
-    const args = substitute(plan.args, { inputs, files, fontsDir: opts.fontsDir ?? DEFAULT_FONTS_DIR, output: opts.outputPath });
+    const fontsDir = opts.fontsDir ?? process.env.FONTS_DIR ?? DEFAULT_FONTS_DIR;
+    const args = substitute(plan.args, { inputs, files, fontsDir, output: opts.outputPath });
     const stderr = await runFfmpeg(opts.ffmpegPath ?? "ffmpeg", ["-progress", "pipe:1", "-nostats", ...args], plan.output.durationMs, opts);
     return { outputPath: opts.outputPath, stderr };
   } finally {
@@ -66,7 +67,12 @@ function escapeFilterPath(p: string): string {
   return p.replace(/\\/g, "/").replace(/:/g, "\\:").replace(/'/g, "\\'");
 }
 
-function runFfmpeg(bin: string, args: string[], durationMs: number, opts: ExecuteOptions): Promise<string> {
+export function runFfmpeg(
+  bin: string,
+  args: string[],
+  durationMs: number,
+  opts: Pick<ExecuteOptions, "onProgress" | "signal">,
+): Promise<string> {
   return new Promise((resolvePromise, reject) => {
     const child = spawn(bin, args, { stdio: ["ignore", "pipe", "pipe"], signal: opts.signal });
     let stderr = "";
