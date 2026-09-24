@@ -157,6 +157,9 @@ function applyOne(t: Timeline, op: EditOp): { timeline: Timeline; recensor: bool
       if (op.audio) t.style.resolved.censorship.audio = op.audio;
       return { timeline: t, recensor: true };
     }
+    case "set_censorship":
+      t.style.resolved.censorship = { ...t.style.resolved.censorship, ...op.patch };
+      return { timeline: t, recensor: true };
     case "uncensor_word": {
       const { w } = findWord(op.wordId);
       w.censorOverride = "allow";

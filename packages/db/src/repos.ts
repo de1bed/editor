@@ -642,3 +642,43 @@ export const feedback = {
     if (ids.length) await db.from("edit_feedback").update({ profile_version_after: versionId }).in("id", ids);
   },
 };
+
+// ------------------------------------------------------------------ detections
+
+export const detections = {
+  async insertMany(db: Db, userId: string, jobId: string | null, tracks: import("@editor/schemas").DetectionTrack[]) {
+    if (!tracks.length) return [] as string[];
+    const r = await db
+      .from("detection_tracks")
+      .insert(
+        tracks.map((t) => ({
+          user_id: userId,
+          asset_id: t.assetId,
+          job_id: jobId,
+          query: t.query,
+          kind: t.kind,
+          model: t.model,
+          start_ms: t.startMs,
+          end_ms: t.endMs,
+          score: t.score,
+          keyframes: t.keyframes,
+        })),
+      )
+      .select("id");
+    return (must(r, "insert detections") as { id: string }[]).map((x) => x.id);
+  },
+  async forJob(db: Db, jobId: string): Promise<import("@editor/schemas").DetectionTrack[]> {
+    const r = await db.from("detection_tracks").select().eq("job_id", jobId).order("score", { ascending: false });
+    return (must(r, "detections") as Row[]).map((x) => ({
+      id: x.id as string,
+      assetId: x.asset_id as string,
+      query: x.query as string,
+      kind: x.kind as import("@editor/schemas").DetectionTrack["kind"],
+      model: x.model as string,
+      startMs: x.start_ms as number,
+      endMs: x.end_ms as number,
+      score: Number(x.score),
+      keyframes: x.keyframes as import("@editor/schemas").DetectionTrack["keyframes"],
+    }));
+  },
+};

@@ -39,3 +39,22 @@
 **Qué falta**
 - La detección del hablante activo es heurística (movimiento de boca frente a diarización). Un modelo ASD (LR-ASD/TalkNet) mejoraría los casos con varias caras de perfil.
 - El modo `split` (dos hablantes apilados) aún no se renderiza.
+
+## Fase 3 — censura y blur ✅
+
+**Qué quedó**
+- Censura es/en: listas base con normalización (acentos, alargamientos "puuuta", leetspeak, prefijos como "chingad*") y palabras añadidas o permitidas por el usuario. Cada palabra censurada genera un bip o silencio en su rango exacto (con margen configurable) y una máscara en el subtítulo (`m*****`, `******`, `#$%&`). Clic sobre una palabra la censura o descensura (la decisión manual gana a las listas). Panel por clip: activar, bip/silencio, máscara, idiomas y palabras extra (`set_censorship`).
+- Blur:
+  - Detección por texto libre ("el logo de la gorra"): job `detect_objects`. Grounding DINO + SAM 2 en Modal producen tracks con keyframes, que se muestran como resultados y se convierten en blur con un clic.
+  - Blur automático al crear el timeline según el perfil (caras, placas, pantallas, logos).
+  - Blur dibujado a mano sobre el preview: la caja se convierte del cuadro 9:16 a coordenadas del original teniendo en cuenta el recorte activo o el modo letterbox (`outputBoxToSource`).
+  - Efectos: desenfoque, pixelado o tapado. Las caras usan elipse.
+- Todo sigue siendo JSON: `add_blur` / `update_blur` / `remove_blur` / `set_censorship` son `EditOp` que el agente de la fase 4 usará igual.
+
+**Cómo probarlo**
+- `pnpm test`: listas y normalización, idempotencia de la censura, overrides, `set_censorship`, geometría salida → original, detección → blur válido. En render real: el bip sustituye al tono en el rango de la palabra, el modo silencio anula ambos, y el blur suaviza la región sin tocar el resto.
+- App: en el editor de un clip, prueba el panel de censura y dibuja un blur sobre el video. Con `MEDIA_WORKER=modal`, escribe "el logo de la gorra" → *Detectar* → *Aplicar blur*.
+
+**Qué falta**
+- El blur usa la caja envolvente de SAM 2; el enmascarado por píxel (máscaras RLE) queda preparado en el esquema pero no se renderiza aún.
+- Un blur dibujado a mano es estático. Para seguir un objeto en movimiento hay que usar la detección.

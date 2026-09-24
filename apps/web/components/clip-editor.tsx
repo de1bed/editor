@@ -4,12 +4,15 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { AVAILABLE_FONT_FAMILIES } from "@editor/core/fonts";
 import { applyOps } from "@editor/core/apply-ops";
 import { timelineToAss } from "@editor/core/ass";
+import { outputBoxToSource } from "@editor/core/geometry";
 import type { Clip, RenderRow } from "@editor/db";
 import type { CaptionStyle, EditOpInput, Timeline } from "@editor/schemas";
 import { api } from "@/lib/client-api";
 import { fmtMs } from "@/lib/format";
 import { useRealtime } from "@/lib/use-realtime";
-import { CaptionPlayer } from "./caption-player";
+import { BlurPanel } from "./blur-panel";
+import { CaptionPlayer, type DrawnBox } from "./caption-player";
+import { CensorshipPanel } from "./censorship-panel";
 import { ChatPanel } from "./chat-panel";
 
 type RenderWithUrl = RenderRow & { url: string | null };
@@ -34,6 +37,7 @@ export function ClipEditor({ projectId, clipId }: { projectId: string; clipId: s
   const [draft, setDraft] = useState<Timeline | null>(null); // optimistic local edits
   const [err, setErr] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
+  const [drawing, setDrawing] = useState(false);
 
   const load = useCallback(async () => {
     try {
@@ -73,6 +77,22 @@ export function ClipEditor({ projectId, clipId }: { projectId: string; clipId: s
     } finally {
       setSaving(false);
     }
+  }
+
+  /** A rectangle drawn on the preview becomes a static blur over the whole clip. */
+  function onDraw(d: DrawnBox) {
+    setDrawing(false);
+    if (!timeline) return;
+    const mapped = outputBoxToSource(timeline, d.outputMs, d.box);
+    if (!mapped) return;
+    const start = Math.min(...timeline.segments.map((s) => s.sourceStartMs));
+    const end = Math.max(...timeline.segments.map((s) => s.sourceEndMs));
+    void edit([
+      {
+        op: "add_blur",
+        region: { id: `blur_manual_${Date.now().toString(36)}`, label: "Manual", kind: "custom", sourceStartMs: start, sourceEndMs: end, keyframes: [{ tMs: start, ...mapped.box }], effect: timeline.style.resolved.censorship.blurEffect },
+      },
+    ]);
   }
 
   async function renderFinal() {
@@ -135,7 +155,7 @@ export function ClipEditor({ projectId, clipId }: { projectId: string; clipId: s
 
       <div className="grid gap-6 lg:grid-cols-[340px_1fr_360px]">
         <div className="space-y-3">
-          <CaptionPlayer src={preview?.url ?? null} ass={ass} />
+          <CaptionPlayer src={preview?.url ?? null} ass={ass} drawing={drawing} onDraw={onDraw} />
           {finalRender && (
             <div className="card p-3 text-sm">
               {finalRender.status === "succeeded" && finalRender.url ? (
@@ -153,7 +173,7 @@ export function ClipEditor({ projectId, clipId }: { projectId: string; clipId: s
         </div>
 
         <div className="card space-y-5 p-5">
-          <h2 className="font-semibold">Subtítulos</h2>
+          <h2 className="font-semibold">Edición</h2>
           {cap && (
             <div className="grid grid-cols-2 gap-4">
               <Field label="Fuente">
@@ -197,6 +217,8 @@ export function ClipEditor({ projectId, clipId }: { projectId: string; clipId: s
           )}
           {timeline && <CaptionWords timeline={timeline} onEdit={edit} />}
           {timeline && <Framing timeline={timeline} onEdit={edit} />}
+          {timeline && <CensorshipPanel timeline={timeline} onEdit={edit} />}
+          {timeline && <BlurPanel clipId={clipId} timeline={timeline} onEdit={edit} drawing={drawing} setDrawing={setDrawing} />}
         </div>
 
         <ChatPanel clipId={clipId} disabled={!timeline} onApplied={load} />

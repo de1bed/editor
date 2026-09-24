@@ -1,7 +1,9 @@
-import { buildTimeline, planReframe } from "@editor/core";
+import { applyOps, buildTimeline, detectionToBlur, planReframe } from "@editor/core";
+import type { EditOpInput } from "@editor/schemas";
 import { assets, clips, projects, timelines, transcripts } from "@editor/db";
 import { PermanentJobError, type JobHandler } from "../context";
 import { projectStyle, ref, str } from "./common";
+import { AUTO_BLUR_QUERIES, detectInTimeline } from "./detect";
 
 /** Clip range + transcript + style (+ face analysis) → Timeline v0 → preview render. */
 export const buildTimelineJob: JobHandler = async (ctx, input) => {
@@ -63,9 +65,26 @@ export const buildTimelineJob: JobHandler = async (ctx, input) => {
       ...(clip.justification ? { justification: clip.justification } : {}),
     },
   });
-  await timelines.insertInitial(ctx.db, { userId: clip.userId, clipId, timeline });
+  // Auto-blur from the style profile (faces, plates, screens, logos) when the GPU worker is available.
+  let final = timeline;
+  const auto = style.settings.censorship.autoBlur;
+  const wanted = (Object.keys(AUTO_BLUR_QUERIES) as (keyof typeof AUTO_BLUR_QUERIES)[]).filter((k) => auto[k]);
+  if (wanted.length && ctx.media.capabilities.detect) {
+    await ctx.progress(0.75, "auto-blur");
+    const ops: EditOpInput[] = [];
+    for (const k of wanted) {
+      const { kind, query } = AUTO_BLUR_QUERIES[k];
+      const tracks = await detectInTimeline(ctx, timeline, query, kind);
+      tracks.forEach((d, i) => {
+        const region = detectionToBlur(d, { id: `auto_${k}_${i}`, effect: style.settings.censorship.blurEffect });
+        if (region) ops.push({ op: "add_blur", region });
+      });
+    }
+    if (ops.length) final = { ...applyOps(timeline, ops).timeline, version: 0 };
+  }
+  await timelines.insertInitial(ctx.db, { userId: clip.userId, clipId, timeline: final });
   const render = await ctx.enqueue("render_preview", { clipId, version: 0 });
-  return { version: 0, cues: timeline.captions.cues.length, reframeTracks: reframe.length, renderJobId: render.id };
+  return { version: 0, cues: final.captions.cues.length, reframeTracks: reframe.length, blurs: final.blurs.length, renderJobId: render.id };
 };
 
 /** Contiguous runs of the same speaker inside a range (from word-level diarization). */

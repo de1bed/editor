@@ -402,7 +402,7 @@ class Meta(BaseModel):
     createdBy: CreatedBy | None = "system"
 
 
-class Audio4(BaseModel):
+class Audio6(BaseModel):
     masterGainDb: float | None = 0
     events: list[AudioEvent] | None = Field([], validate_default=True)
     music: list[MusicCue] | None = Field([], validate_default=True)
@@ -535,7 +535,7 @@ class Timeline(BaseModel):
     reframe: list[ReframeTrack] | None = Field([], validate_default=True)
     captions: Captions | None = Field({"enabled": True, "cues": []}, validate_default=True)
     blurs: list[BlurRegion] | None = Field([], validate_default=True)
-    audio: Audio4 | None = Field({"masterGainDb": 0, "events": [], "music": []}, validate_default=True)
+    audio: Audio6 | None = Field({"masterGainDb": 0, "events": [], "music": []}, validate_default=True)
     overlays: list[Overlay] | None = Field([], validate_default=True)
 
 

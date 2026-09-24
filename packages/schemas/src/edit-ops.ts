@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { Id, Ms } from "./common";
-import { CaptionStyle } from "./style";
+import { CaptionStyle, CensorshipSettings } from "./style";
 import { BlurRegion, MusicCue, Overlay, ReframeTrack, Segment } from "./timeline";
 
 /**
@@ -26,6 +26,8 @@ export const EditOp = z
     z.object({ op: z.literal("set_captions_enabled"), enabled: z.boolean() }),
     z.object({ op: z.literal("regroup_captions"), maxWordsPerLine: z.int().min(1).max(12).optional() }),
     z.object({ op: z.literal("censor_word"), wordId: Id, audio: z.enum(["bleep", "mute"]).optional() }),
+    /** Clip censorship settings (lists, bleep/mute, caption mask); re-applies the word lists. */
+    z.object({ op: z.literal("set_censorship"), patch: CensorshipSettings.partial() }),
     z.object({ op: z.literal("uncensor_word"), wordId: Id }),
     z.object({ op: z.literal("add_blur"), region: BlurRegion }),
     z.object({ op: z.literal("update_blur"), id: Id, patch: BlurRegion.partial().omit({ id: true }) }),
